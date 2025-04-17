@@ -9,14 +9,13 @@ public enum JobType
 }
 
 
-public class NPC : MonoBehaviour
+public class NPC : GAgent
 {
-    public JobType job;  
-    private GAgent agent; 
+    public JobType job;
 
-    void Start()
+    [ContextMenu("AsignJob")]
+    public void AsignJob()
     {
-        agent = GetComponent<GAgent>();
         AssignJobTasks();
     }
 
@@ -47,34 +46,34 @@ public class NPC : MonoBehaviour
     {
         // Agregar tareas de cortar árboles
         SubGoal chopWoodGoal = new SubGoal("ChopWood", 1, false);
-        agent.goals.Add(chopWoodGoal, 1);  // Asignamos la meta con prioridad
+        goals.Add(chopWoodGoal, 1);  // Asignamos la meta con prioridad
     }
 
     void AddMinerTasks()
     {
         // Agregar tareas de minar
         SubGoal mineGoal = new SubGoal("Mine", 1, false);
-        agent.goals.Add(mineGoal, 1);  // Asignamos la meta con prioridad
+        goals.Add(mineGoal, 1);  // Asignamos la meta con prioridad
     }
 
     void AddFarmerTasks()
     {
         // Agregar tareas de sembrar y cosechar
         SubGoal farmGoal = new SubGoal("Farm", 1, false);
-        agent.goals.Add(farmGoal, 1);
+       goals.Add(farmGoal, 1);
     }
 
     void AddBuilderTasks()
     {
         // Agregar tareas de construcción
         SubGoal buildGoal = new SubGoal("Build", 1, false);
-        agent.goals.Add(buildGoal, 1);
+        goals.Add(buildGoal, 1);
     }
 
     void AddHealerTasks()
     {
         // Agregar tareas de curación
         SubGoal healGoal = new SubGoal("Heal", 1, false);
-        agent.goals.Add(healGoal, 1);
+        goals.Add(healGoal, 1);
     }
 }
