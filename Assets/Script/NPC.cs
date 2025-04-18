@@ -19,8 +19,16 @@ public class NPC : GAgent
         AssignJobTasks();
     }
 
+    [ContextMenu("NewAsignJob")]
+    public void NewAsignJob()
+    {
+        base.Start();
+        SubGoal s1 = new SubGoal("choppedTree", 3, false);
+        goals.Add(s1, 3);
+    }
     void AssignJobTasks()
     {
+        base.Start();
         switch (job)
         {
             case JobType.Lumberjack:
@@ -45,7 +53,7 @@ public class NPC : GAgent
     void AddLumberjackTasks()
     {
         // Agregar tareas de cortar árboles
-        SubGoal chopWoodGoal = new SubGoal("ChopWood", 1, false);
+        SubGoal chopWoodGoal = new SubGoal("choppedTree", 1, true);
         goals.Add(chopWoodGoal, 1);  // Asignamos la meta con prioridad
     }
 

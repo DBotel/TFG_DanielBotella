@@ -1,14 +1,26 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GetItem : GAction
 {
     public string itemTag = "Tool";
     private GameObject targetItem;
-    private GAgent agent;
+    private GAgent Gagent;
+    public Transform pruebaDestination;
 
+    [ContextMenu("SetDestination")]
+    public void SetDestination()
+    {
+        agent.ResetPath();
+        if (agent.path != null) Debug.LogError("Hay un Path" + agent.path);
+        print("SetDestination");
+
+        agent.SetDestination(pruebaDestination.transform.position);
+    }
     public override bool PrePerform()
     {
-        agent = GetComponent<GAgent>();
+        Gagent = GetComponent<GAgent>();
 
         // Buscar el objeto más cercano con el tag deseado
         GameObject[] items = GameObject.FindGameObjectsWithTag(itemTag);
@@ -37,11 +49,11 @@ public class GetItem : GAction
         target = targetItem;
         return true;
     }
-
+   
     public override bool PostPerform()
     {
-        agent.inventory.AddItem(targetItem);
-        agent.beliefs.ModifyState("Has" + itemTag, 1);
+        Gagent.inventory.AddItem(targetItem);
+        Gagent.beliefs.ModifyState("Has" + itemTag, 1);
         targetItem.SetActive(false);
 
         Debug.Log($"{gameObject.name} ha recogido un {itemTag}");
