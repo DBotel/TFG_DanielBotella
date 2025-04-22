@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
 
     public float rotationSpeed = 100f;
 
-
+    public bool locked = false;
 
     //Cursor
     public Texture2D customCursor;
@@ -24,6 +24,8 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
+        if(Input.GetKeyUp(KeyCode.L))locked=!locked;
+        if (locked) return;
         HandleMovement();
         HandleZoom();
         HandleRotation();

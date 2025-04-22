@@ -67,20 +67,25 @@ public class GAgent : MonoBehaviour
     // Subobjetivo actual que el agente está persiguiendo
     SubGoal currentGoal;
 
-
+    public TownHall town;
     public GInventory inventory = new GInventory();
     public GBeliefs beliefs = new GBeliefs();
 
     protected virtual void Start()
     {
+        
+        inventory = GetComponent<GInventory>();
+        beliefs = new GBeliefs(); // si uso esto en un futuro lo tendra que llevar de componente en el gameObject y hacer GetComponent
+
+        
         // Obtiene todas las componentes de tipo GAction que están asociadas a este GameObject
         GAction[] acts = this.GetComponents<GAction>();
-
         // Añade cada acción obtenida a la lista de acciones del agente
         foreach (GAction a in acts)
         {
             actions.Add(a); 
         }
+        
     }
 
     bool invoked = false;

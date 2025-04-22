@@ -58,7 +58,7 @@ public class GPlanner
         // Si no se pudo construir un plan (gráfico), devuelve null
         if (!success)
         {
-            Debug.Log("NO HAY PLAN"); 
+            Debug.Log("NO HAY PLAN");
             return null;
         }
 

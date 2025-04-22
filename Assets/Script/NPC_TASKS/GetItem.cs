@@ -57,6 +57,11 @@ public class GetItem : GAction
         targetItem.SetActive(false);
 
         Debug.Log($"{gameObject.name} ha recogido un {itemTag}");
+
+       
+        G_Agent.actions.Remove(this);
+        Destroy(this);
+
         return true;
     }
 

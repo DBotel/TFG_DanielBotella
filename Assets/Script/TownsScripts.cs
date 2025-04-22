@@ -19,6 +19,8 @@ public class Town_Resources
 
     private int nextId;
 
+    public TownHall TownHall;
+
     public void SetAllTownResources(Dictionary<TownResourcesTypes, int> savedResources)
     {
 
@@ -56,6 +58,14 @@ public class Town_Resources
         TownResources_All[_type] = updated;
         SyncProperty(_type, updated);
     }
+    public void AddResourceAmount(TownResourcesTypes _type, int _amount)
+    {
+        int current = TownResources_All[_type];
+        int updated = Mathf.Max(0, current + _amount);
+        TownResources_All[_type] = updated;
+        SyncProperty(_type, updated);
+    }
+
     private void SyncProperty(TownResourcesTypes type, int amount)
     {
         switch (type)
@@ -64,6 +74,7 @@ public class Town_Resources
             case TownResourcesTypes.STONE: Stone = amount; break;
             case TownResourcesTypes.MONEY: Money = amount; break;
         }
+        TownHall.CallRefreshUI();
     }
 
     public TownResourcesTypes GetEnumFromID(int _id)

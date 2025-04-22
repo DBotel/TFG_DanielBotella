@@ -44,7 +44,7 @@ public abstract class GAction : MonoBehaviour
     public Dictionary<string, int> effects;
 
     public WorldStates agentsBeliefs;
-
+    public GAgent G_Agent;
     public bool runing = false;
 
     // Constructor de la clase GAction
@@ -70,6 +70,8 @@ public abstract class GAction : MonoBehaviour
             {
                 effects.Add(w.key, w.value); // Agrega cada efecto al diccionario
             }
+
+        if(G_Agent==null)G_Agent=GetComponent<GAgent>();
     }
 
     // Método  para indicar si la acción es alcanzable

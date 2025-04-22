@@ -10,7 +10,7 @@ public class TownHall : MonoBehaviour
     private void Awake()
     {
         town_resources = new Town_Resources();
-
+        town_resources.TownHall = this;
 
         //setear variables de prueba
         town_resources.SetResourceAmount(TownResourcesTypes.WOOD, 100);
