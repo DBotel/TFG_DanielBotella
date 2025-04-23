@@ -21,6 +21,7 @@ public class DropItem : GAction
         item.SetActive(true);
         G_Agent.inventory.RemoveItem(item);
         G_Agent.actions.Remove(this);
+        G_Agent.GetComponent<NPC>().hasTool = true;
         Destroy(this);
         return true;
     }

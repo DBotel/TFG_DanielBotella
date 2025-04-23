@@ -5,7 +5,7 @@ public class FarmingResources : GAction
     [Header("Recurso a farmear")]
     public string resourceTag;                  // p.ej. "Tree", "Ore", etc.
     public TownResourcesTypes resourceType;     // enum WOOD, STONE, ...
-
+    bool stopFarm = false;
     void Start()
     {
         // Efecto: cada vez que ejecutes esta acción, produces 1 unidad  
@@ -30,7 +30,7 @@ public class FarmingResources : GAction
             }
         }
 
-        if (closest == null) return false;
+        if (closest == null) { Debug.LogError("no hay mas recurosos"); stopFarm = true; PostPerform(); return false; }
         target = closest;
         return true;
     }
@@ -40,23 +40,29 @@ public class FarmingResources : GAction
         NPC npcScript = GetComponent<NPC>();
         
         // Llama a FarmResources para añadir al TownHall
+        if(target!=null)
+    {
         var farmComp = target.GetComponent<FarmResources>();
-        if (farmComp != null) farmComp.FarmResource();
+        if (farmComp != null)
+        {
+            farmComp.FarmResource();
 
-        // Notifica al NPC para que él lleve la cuenta
-        int farmAmount = farmComp.value;
-        GetComponent<NPC>().OnResourceGathered(resourceType,farmAmount);
+            // Notifica al NPC para que él lleve la cuenta
+            int farmAmount = farmComp.value;
+            GetComponent<NPC>().OnResourceGathered(resourceType, farmAmount);
+        }
+    }
         // Comprobar si aún no se ha cumplido y reactivar el subgoal
-        if (!npcScript.HasCompletedMission())
+        if (!npcScript.HasCompletedMission() && !stopFarm)
         {
             npcScript.ReassignCurrentMission();
         }
-        else
+        else if(npcScript.hasTool)
         {
             npcScript.DropItem(npcScript.toolTag);
 
         }
-       
+    
        G_Agent.actions.Remove(this);
         Destroy(this);
         return true;

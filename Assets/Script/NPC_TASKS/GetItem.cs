@@ -6,7 +6,6 @@ public class GetItem : GAction
 {
     public string itemTag = "Tool";
     private GameObject targetItem;
-    private GAgent Gagent;
     public Transform pruebaDestination;
 
     [ContextMenu("SetDestination")]
@@ -20,7 +19,6 @@ public class GetItem : GAction
     }
     public override bool PrePerform()
     {
-        Gagent = GetComponent<GAgent>();
 
         // Buscar el objeto más cercano con el tag deseado
         GameObject[] items = GameObject.FindGameObjectsWithTag(itemTag);
@@ -52,8 +50,9 @@ public class GetItem : GAction
    
     public override bool PostPerform()
     {
-        Gagent.inventory.AddItem(targetItem);
-        Gagent.beliefs.ModifyState("Has" + itemTag, 1);
+        G_Agent.inventory.AddItem(targetItem);
+        G_Agent.GetComponent<NPC>().hasTool = true;
+        G_Agent.beliefs.ModifyState("Has" + itemTag, 1);
         targetItem.SetActive(false);
 
         Debug.Log($"{gameObject.name} ha recogido un {itemTag}");

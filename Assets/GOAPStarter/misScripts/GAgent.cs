@@ -87,7 +87,25 @@ public class GAgent : MonoBehaviour
         }
         
     }
-
+    /// <summary>
+    /// Resetea el planificador para forzar que se vuelva a crear un nuevo plan
+    /// </summary>
+    public void ResetPlan()
+    {
+        goals.Clear();
+        if(actionQueue!=null)actionQueue.Clear();
+        currentGoal = null;
+        if(currentAction)currentAction.runing=false;
+        planner = null;
+        actionQueue = null;
+        currentAction = null;
+    }
+    public void DestroyAllActions()
+    {
+        GAction[] acts = this.GetComponents<GAction>();
+        foreach (GAction a in acts) Destroy(a);
+        ResetPlan();
+    }
     bool invoked = false;
     
     void CompleteAction()
@@ -96,7 +114,7 @@ public class GAgent : MonoBehaviour
         currentAction.PostPerform();
         invoked = false;
     }
-    void LateUpdate()
+    protected virtual void LateUpdate()
     {
         // Aquí se podría agregar la lógica que se debe ejecutar después de cada frame (como la toma de decisiones, 
         // ejecución de la siguiente acción, o actualización del estado del agente)

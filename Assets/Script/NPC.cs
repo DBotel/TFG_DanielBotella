@@ -19,9 +19,10 @@ public class NPC : GAgent
     public TownResourcesTypes missionResourceType;
     public string missionResourceTag;
     public bool needTool;          // ¿Necesita herramienta?
+    public bool hasTool;          // ¿Tiene la herramienta?
     public string toolTag;           // p.ej. "Axe"
     public int missionTarget;     // 0 = infinito
-
+    
     private SubGoal missionSubGoal;
     private int missionProgress;
 
@@ -127,22 +128,25 @@ public class NPC : GAgent
     }
 
 
-    /*
+    
     private bool wasPlanning = false;
 
-    private void LateUpdate()
+    protected override void LateUpdate()
     {
-        if (currentAction == null && !wasPlanning)
+        base.LateUpdate();
+        if (currentAction == null && !wasPlanning && actions.Count<1)
         {
+           // ResetPlan();
             // Añadir la acción de deambular si no hay plan
             Debug.Log($"{gameObject.name} no tiene plan, añadiendo Wander...");
             Wander wander = gameObject.AddComponent<Wander>();
-           // wander.duration = Random.Range(3f, 6f); // tiempo aleatorio de deambular
-            actions.Add(wander);
+           // wander.duration = Random.Range(3f, 6f); 
+           
 
             // Crear subobjetivo temporal
             SubGoal wanderGoal = new SubGoal("wander", 1, false);
-            goals[wanderGoal] = 1;
+            goals.Add(wanderGoal,1);
+            actions.Add(wander);
 
             wasPlanning = true; // para evitar que lo añada múltiples veces
         }
@@ -151,12 +155,19 @@ public class NPC : GAgent
             wasPlanning = false;
         }
     }
-    */
+    
+    [ContextMenu("DestroyAllActions")]
+    public void DestroyActions()
+    {
+        DestroyAllActions();
+    }
 
     [ContextMenu("Misión: 400 Madera con Hacha")]
     public void TestJob1()
     {
+        DestroyAllActions();
         actions.Clear();
+        goals.Clear();
         missionProgress = 0;
         missionResourceType = TownResourcesTypes.WOOD;
         missionResourceTag = "Tree";
@@ -169,7 +180,7 @@ public class NPC : GAgent
     [ContextMenu("Misión: Madera Infinito sin Hacha")]
     public void TestJob2()
     {
-        actions.Clear();
+        goals.Clear();
         missionProgress = 0;
         missionResourceType = TownResourcesTypes.WOOD;
         missionResourceTag = "Tree";
