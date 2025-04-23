@@ -71,6 +71,7 @@ public class GAgent : MonoBehaviour
     public GInventory inventory = new GInventory();
     public GBeliefs beliefs = new GBeliefs();
 
+    public bool selected = false;
     protected virtual void Start()
     {
         
@@ -103,7 +104,7 @@ public class GAgent : MonoBehaviour
     public void DestroyAllActions()
     {
         GAction[] acts = this.GetComponents<GAction>();
-        foreach (GAction a in acts) Destroy(a);
+        foreach (GAction a in acts) { a.PostPerform(); Destroy(a); }
         ResetPlan();
     }
     bool invoked = false;
@@ -116,6 +117,11 @@ public class GAgent : MonoBehaviour
     }
     protected virtual void LateUpdate()
     {
+        if (selected) 
+        { if (actions[0].GetComponent<Wander>()) actions.Clear();goals.Clear();
+                
+                return; 
+        }
         // Aquí se podría agregar la lógica que se debe ejecutar después de cada frame (como la toma de decisiones, 
         // ejecución de la siguiente acción, o actualización del estado del agente)
 

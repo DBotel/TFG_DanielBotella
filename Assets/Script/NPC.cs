@@ -25,7 +25,7 @@ public class NPC : GAgent
     
     private SubGoal missionSubGoal;
     private int missionProgress;
-
+    private string missionRecipeID;
     protected override void Start()
     {
         //NewAsignJob();
@@ -127,8 +127,48 @@ public class NPC : GAgent
         return null;
     }
 
+    /// <summary>
+    /// Asigna misión de fabricar
+    /// </summary>
+    public void AssignCraftMission(string recipeID, int targetAmount)
+    {
+        // Limpiar
+       // goals.Clear();
+        actions.RemoveAll(a => a is GAction);
 
-    
+        missionRecipeID = recipeID;
+        missionProgress = 0;
+        missionTarget = targetAmount;
+
+        // SubGoal: clave = recipeID+"Crafted"
+        missionSubGoal = new SubGoal(recipeID + "Crafted", 1, false);
+        goals.Add(missionSubGoal, 1);
+
+        // Acción dinámica
+        var craft = gameObject.AddComponent<CraftItem>();
+        craft.recipeID = recipeID;
+        actions.Add(craft);
+
+        // Forzar replan
+        ResetPlan();
+    }
+
+    /// <summary>
+    /// Llamado por CraftItem.PostPerform()
+    /// </summary>
+    public void OnItemCrafted(string recipeID)
+    {
+        if (recipeID + "Crafted" != missionSubGoal.sGoals.Keys.First()) return;
+        missionProgress++;
+        Debug.Log($"{name}: fabricadas {missionProgress}/{missionTarget} de {recipeID}");
+
+        if (missionTarget > 0 && missionProgress >= missionTarget)
+        {
+            goals.Remove(missionSubGoal);
+            Debug.Log($"{name}: misión de crafting completada");
+        }
+    }
+
     private bool wasPlanning = false;
 
     protected override void LateUpdate()
@@ -155,19 +195,26 @@ public class NPC : GAgent
             wasPlanning = false;
         }
     }
-    
+    [ContextMenu("Job: 1 Hacha")]
+    public void Job_Craft5Arrows()
+    {
+        DestroyAllActions();
+        AssignCraftMission("Axe", 1);
+    }
     [ContextMenu("DestroyAllActions")]
     public void DestroyActions()
     {
+        actions.Clear();
+        goals.Clear();
         DestroyAllActions();
+
     }
 
     [ContextMenu("Misión: 400 Madera con Hacha")]
     public void TestJob1()
     {
         DestroyAllActions();
-        actions.Clear();
-        goals.Clear();
+       
         missionProgress = 0;
         missionResourceType = TownResourcesTypes.WOOD;
         missionResourceTag = "Tree";
@@ -188,17 +235,12 @@ public class NPC : GAgent
         missionTarget = 0;
         AssignGatherMission();
     }
-    private void Update()
-    {
-            if(Input.GetKeyUp(KeyCode.Space))NewAsignJob();
-    }
-    [ContextMenu("AsignJob")]
+
     public void AsignJob()
     {
         AssignJobTasks();
     }
 
-    [ContextMenu("NewAsignJob")]
     public void NewAsignJob()
     {
         base.Start();
