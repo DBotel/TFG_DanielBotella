@@ -12,6 +12,7 @@ public class NPCRoleAssigner : MonoBehaviour
 
     private GAgent agent;
     private LumberjackAgent lumberjackAgent;
+    private StoneMiner miner;
     // Añade aquí MinerAgent si lo creas
     // private MinerAgent minerAgent;
 
@@ -19,6 +20,7 @@ public class NPCRoleAssigner : MonoBehaviour
     {
         agent = GetComponent<GAgent>();
         lumberjackAgent = GetComponent<LumberjackAgent>();
+        miner = GetComponent<StoneMiner>();
         // minerAgent = GetComponent<MinerAgent>();
     }
 
@@ -26,7 +28,11 @@ public class NPCRoleAssigner : MonoBehaviour
     {
         ApplyRole();
     }
-
+    [ContextMenu("ChangeRole")]
+    void ChangeRole()
+    {
+        ApplyRole();
+    }
     /// <summary>
     /// Configura el agente según el rol seleccionado.
     /// </summary>
@@ -42,9 +48,10 @@ public class NPCRoleAssigner : MonoBehaviour
                 break;
 
             case NPCRole.Miner:
-                Debug.LogWarning("MinerAgent no implementado aun.");
-                // if (minerAgent != null)
-                //     minerAgent.ConfigureMiner(desiredAmount);
+                if (miner != null)
+                    miner.ConfigureStoneMiner(desiredAmount);
+                else
+                    Debug.LogError("Miner no encontrado en el NPC.");
                 break;
         }
     }

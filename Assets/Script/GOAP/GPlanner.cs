@@ -22,29 +22,24 @@ public class GPlanner
 {
     public Queue<GAction> plan(GAgent agent, List<GAction> actions, Dictionary<string, int> goal)
     {
-        List<GAction> usableActions = new List<GAction>();
+        // Filtrar acciones alcanzables según estado inicial del agente
+        List<GAction> usableActions = actions.Where(a => a.IsAchievable()).ToList();
 
-        foreach (GAction action in actions)
-        {
-            if (action.IsAchievable())
-                usableActions.Add(action);
-        }
-
+        // Estado inicial a partir de creencias
+        Node start = new Node(null, 0, new Dictionary<string, int>(agent.beliefs.states), null);
         List<Node> leaves = new List<Node>();
 
-        // Usar las creencias del agente como estado inicial
-        Node start = new Node(null, 0, new Dictionary<string, int>(agent.beliefs.states), null);
-
         bool success = BuildGraph(start, leaves, usableActions, goal);
-
         if (!success)
         {
             Debug.Log("NO HAY PLAN");
             return null;
         }
 
-        Node cheapest = leaves.OrderBy(n => n.cost).FirstOrDefault();
+        // Seleccionar el plan de menor coste
+        Node cheapest = leaves.OrderBy(n => n.cost).First();
 
+        // Reconstruir secuencia de acciones
         List<GAction> result = new List<GAction>();
         Node n = cheapest;
         while (n != null)
@@ -60,7 +55,6 @@ public class GPlanner
             Debug.Log("Q : " + a.actionName);
             queue.Enqueue(a);
         }
-
         return queue;
     }
 
@@ -68,37 +62,37 @@ public class GPlanner
     {
         bool foundPath = false;
 
+        // Por cada acción alcanzable desde el estado del padre
         foreach (GAction action in usableActions)
         {
-            if (action.IsAchievableGiven(parent.state))
+            if (!action.IsAchievableGiven(parent.state))
+                continue;
+
+            // Aplicar efectos para generar nuevo estado
+            Dictionary<string, int> newState = new Dictionary<string, int>(parent.state);
+            foreach (var eff in action.effects)
             {
-                Dictionary<string, int> currentState = new Dictionary<string, int>(parent.state);
-
-                foreach (var eff in action.effects)
-                {
-                    if (currentState.ContainsKey(eff.Key))
-                        currentState[eff.Key] += eff.Value;
-                    else
-                        currentState[eff.Key] = eff.Value;
-                }
-
-                Node node = new Node(parent, parent.cost + action.cost, currentState, action);
-
-                if (GoalAchieved(goal, currentState))
-                {
-                    leaves.Add(node);
-                    foundPath = true;
-                }
+                if (newState.ContainsKey(eff.Key))
+                    newState[eff.Key] += eff.Value;
                 else
-                {
-                    if (node.parent != null && node.state.SequenceEqual(node.parent.state))
-                        continue; // previene bucles infinitos
+                    newState[eff.Key] = eff.Value;
+            }
 
-                    List<GAction> subset = usableActions.Where(a => !a.Equals(action) || a is GActionFarmResource).ToList();
-                    bool found = BuildGraph(node, leaves, subset, goal);
-                    if (found)
-                        foundPath = true;
-                }
+            Node node = new Node(parent, parent.cost + action.cost, newState, action);
+
+            // Si el nuevo estado cumple la meta, agregar a leaves
+            if (GoalAchieved(goal, newState))
+            {
+                leaves.Add(node);
+                foundPath = true;
+            }
+            else
+            {
+                // Crear subconjunto sin reutilizar la misma acción para evitar loops
+                List<GAction> subset = usableActions.Where(a => !a.Equals(action)).ToList();
+                bool found = BuildGraph(node, leaves, subset, goal);
+                if (found)
+                    foundPath = true;
             }
         }
         return foundPath;

@@ -8,11 +8,15 @@ public class GActionTakeTool : GAction
     [Header("Herramienta a coger (Tag)")]
     public string toolTag;
 
+    [Header("Clave de recurso a comprobar (ej. collected_WOOD, collected_STONE)")]
+    public string collectStateKey; // Ahora parametrizado
+
     private Vector3 originalPosition;
     private Transform originalParent;
 
     private void Start()
     {
+        // Efecto de tomar la herramienta
         string effectKey = "hasTool_" + toolTag;
         if (!effects.ContainsKey(effectKey))
             effects.Add(effectKey, 1);
@@ -23,22 +27,28 @@ public class GActionTakeTool : GAction
         // No tomar herramienta si ya se tiene
         if (G_Agent.inventory.HasTool(toolTag))
         {
-            Debug.Log("[TakeTool] Ya tengo la herramienta " + toolTag + ", ignorando acción.");
+            Debug.Log($"[TakeTool] Ya tengo la herramienta {toolTag}, ignorando acción.");
             return false;
         }
 
-        // No tomar herramienta si ya se completó la meta de recolección
-        string collectedKey = "collected_WOOD"; // Puedes parametrizar esto si es necesario
-        int collectedSoFar = G_Agent.beliefs.GetState(collectedKey);
-        if (collectedSoFar >= G_Agent.goals.Keys.FirstOrDefault()?.sGoals[collectedKey])
+        // No tomar herramienta si ya se completó la meta de recolección para este recurso
+        if (!string.IsNullOrEmpty(collectStateKey))
         {
-            Debug.Log("[TakeTool] Ya se recogió suficiente recurso, no tomar herramienta.");
-            return false;
+            int collectedSoFar = G_Agent.beliefs.GetState(collectStateKey);
+            var goal = G_Agent.goals.Keys.FirstOrDefault(g => g.sGoals.ContainsKey(collectStateKey));
+            if (goal != null && collectedSoFar >= goal.sGoals[collectStateKey])
+            {
+                Debug.Log($"[TakeTool] Ya recolectado suficiente ({collectStateKey}) = {collectedSoFar}, ignorando herramienta.");
+                return false;
+            }
         }
 
+        // Buscar herramienta en la escena
         var tools = GameObject.FindGameObjectsWithTag(toolTag);
-        if (tools.Length == 0) return false;
+        if (tools.Length == 0)
+            return false;
 
+        // Seleccionar la más cercana
         var closest = tools.OrderBy(t => Vector3.Distance(t.transform.position, transform.position)).First();
         target = closest;
 
@@ -52,16 +62,17 @@ public class GActionTakeTool : GAction
     {
         if (target != null)
         {
+            // Añadir al inventario y actualizar creencias
             G_Agent.inventory.AddItem(target);
             G_Agent.beliefs.ModifyState("hasTool_" + toolTag, 1);
 
+            // Guardar datos para devolver luego
             var data = target.AddComponent<ToolData>();
             data.originalPosition = originalPosition;
             data.originalParent = originalParent;
 
             target.SetActive(false);
         }
-
         return true;
     }
 }
