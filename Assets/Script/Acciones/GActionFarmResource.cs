@@ -1,101 +1,54 @@
-using System.Collections.Generic;
+using UnityEngine.AI;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class GActionFarmResource : GAction
 {
-    [Header("Recurso a farmear (Tag)")]
     public string resourceTag;
-    [Header("Tipo de recurso en enum")]
     public TownResourcesTypes resourceType;
-    [Header("Cantidad total necesaria de recurso (unidades)")]
     public int amountNeeded = 5;
 
-    private bool harvested = false;
-
-    private void Start()
+    public override void SetupAction()
     {
-        // Precondición: necesito herramienta
-        string toolKey = "hasTool_" + GetRequiredToolTag();
-        if (!preconditions.ContainsKey(toolKey))
-            preconditions.Add(toolKey, 1);
+        Debug.Log($"SetupAction FarmResource: resourceTag={resourceTag}, preconditions={preconditions.Count}, effects={effects.Count}");
+        preconditions.Clear();
+        effects.Clear();
 
-        // Efecto: aumentar recurso recolectado en la planificación
+        // 1) Necesito la herramienta correcta
+        string toolKey = "hasTool_" + (resourceType == TownResourcesTypes.WOOD ? "Axe" : "Pickaxe");
+        preconditions[toolKey] = 1;
+
+        // 2) Efecto en el plan: voy a recolectar X unidades
         string collectKey = "collected_" + resourceType;
-        if (!effects.ContainsKey(collectKey))
+        int val = 1;
+        var nodes = GameObject.FindGameObjectsWithTag(resourceTag);
+        if (nodes.Length > 0)
         {
-            int effectValue = 1;
-            var nodes = GameObject.FindGameObjectsWithTag(resourceTag);
-            if (nodes.Length > 0)
-            {
-                var exampleNode = nodes[0].GetComponent<FarmResources>();
-                if (exampleNode != null)
-                    effectValue = exampleNode.value;
-            }
-            effects.Add(collectKey, effectValue);
-            Debug.Log($"[FarmResource] Efecto añadido: {collectKey} += {effectValue}");
+            var ex = nodes[0].GetComponent<FarmResources>();
+            if (ex != null) val = ex.value;
         }
-    }
-
-    // Limitar recursión: solo farmear si no se ha alcanzado la cantidad deseada
-    public override bool IsAchievableGiven(Dictionary<string, int> conditions)
-    {
-        if (!base.IsAchievableGiven(conditions))
-            return false;
-
-        string collectKey = "collected_" + resourceType;
-        conditions.TryGetValue(collectKey, out int have);
-        return have < amountNeeded;
+        effects[collectKey] = val;
     }
 
     public override bool PrePerform()
     {
-        harvested = false;
-
+        Debug.Log("PrePerform FarmResource");
         var nodes = GameObject.FindGameObjectsWithTag(resourceTag);
-        if (nodes.Length == 0)
-            return false;
-
-        // Seleccionamos el recurso más cercano
+        if (nodes.Length == 0) return false;
         target = nodes.OrderBy(n => Vector3.Distance(transform.position, n.transform.position)).First();
         return true;
     }
 
     public override bool PostPerform()
     {
-        if (target != null && !harvested)
+        var farm = target.GetComponent<FarmResources>();
+        if (farm != null)
         {
-            var farmScript = target.GetComponent<FarmResources>();
-            if (farmScript != null)
-            {
-                int val = farmScript.value;
-                farmScript.FarmResource();
-
-                // Actualizamos creencias del agente
-                string collectKey = "collected_" + resourceType;
-                if (!G_Agent.beliefs.states.ContainsKey(collectKey))
-                    G_Agent.beliefs.states.Add(collectKey, 0);
-                G_Agent.beliefs.ModifyState(collectKey, val);
-
-                // Actualizamos el estado global
-                GWorld.Instance.GetWorld().ModifyState(resourceType.ToString(), val);
-
-                Debug.Log($"[FarmResource] Recolectado {val} unidades de {resourceType}");
-            }
-            harvested = true;
+            farm.FarmResource();
+            G_Agent.beliefs.ModifyState("collected_" + resourceType, farm.value);
+            GWorld.Instance.GetWorld().ModifyState(resourceType.ToString(), farm.value);
         }
         return true;
-    }
-
-    private string GetRequiredToolTag()
-    {
-        return resourceType switch
-        {
-            TownResourcesTypes.WOOD => "Axe",
-            TownResourcesTypes.STONE => "Pickaxe",
-            _ => string.Empty,
-        };
     }
 }

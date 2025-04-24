@@ -98,4 +98,12 @@ public abstract class GAction : MonoBehaviour
 
     // PostPerform se ejecuta después de realizar la acción (p. ej., actualización de estado del mundo)
     public abstract bool PostPerform();
+
+    /// <summary>
+    /// Se llama justo antes de planificar/executar la acción, para refrescar
+    /// preconditions y effects según los campos públicos actuales.
+    /// </summary>
+    public virtual void SetupAction()
+    {
+    }
 }

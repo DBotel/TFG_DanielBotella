@@ -10888,7 +10888,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e5ef257559b0814792c374624c878fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  role: 1
+  role: 0
   desiredAmount: 10
 --- !u!114 &914979809
 MonoBehaviour:
@@ -10961,6 +10961,7 @@ MonoBehaviour:
   G_Agent: {fileID: 0}
   runing: 0
   toolTag: 
+  collectStateKey: 
 --- !u!114 &914979812
 MonoBehaviour:
   m_ObjectHideFlags: 0

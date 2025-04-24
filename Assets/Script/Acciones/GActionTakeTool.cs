@@ -1,6 +1,6 @@
-using System.Linq;
-using UnityEngine;
+ï»¿using System.Linq;
 using UnityEngine.AI;
+using UnityEngine;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class GActionTakeTool : GAction
@@ -9,70 +9,67 @@ public class GActionTakeTool : GAction
     public string toolTag;
 
     [Header("Clave de recurso a comprobar (ej. collected_WOOD, collected_STONE)")]
-    public string collectStateKey; // Ahora parametrizado
+    public string collectStateKey;
 
     private Vector3 originalPosition;
     private Transform originalParent;
 
-    private void Start()
+    public override void SetupAction()
     {
-        // Efecto de tomar la herramienta
-        string effectKey = "hasTool_" + toolTag;
-        if (!effects.ContainsKey(effectKey))
-            effects.Add(effectKey, 1);
+        Debug.Log($"SetupAction TakeTool: toolTag={toolTag}, preconditions={preconditions.Count}, effects={effects.Count}");
+        preconditions.Clear();
+        effects.Clear();
+
+        // SÃ³lo puedo tomar la herramienta si NO la tengo
+        string haveKey = "hasTool_" + toolTag;
+        preconditions[haveKey] = 0;
+
+        // Y al tomarla, la tendrÃ©
+        effects[haveKey] = 1;
+
+        targetTag = toolTag;
+        Debug.Log($"SetupAction TakeTool: targetTag={targetTag}");
     }
 
     public override bool PrePerform()
     {
-        // No tomar herramienta si ya se tiene
-        if (G_Agent.inventory.HasTool(toolTag))
-        {
-            Debug.Log($"[TakeTool] Ya tengo la herramienta {toolTag}, ignorando acción.");
-            return false;
-        }
+        Debug.Log("PrePerform TakeTool");
 
-        // No tomar herramienta si ya se completó la meta de recolección para este recurso
+        // Evito volver a tomarla si ya la tengo en inventario
+        if (G_Agent.inventory.HasTool(toolTag))
+            return false;
+
+        // Evito tomarla si ya recolectÃ© suficiente
         if (!string.IsNullOrEmpty(collectStateKey))
         {
-            int collectedSoFar = G_Agent.beliefs.GetState(collectStateKey);
+            int have = G_Agent.beliefs.GetState(collectStateKey);
             var goal = G_Agent.goals.Keys.FirstOrDefault(g => g.sGoals.ContainsKey(collectStateKey));
-            if (goal != null && collectedSoFar >= goal.sGoals[collectStateKey])
-            {
-                Debug.Log($"[TakeTool] Ya recolectado suficiente ({collectStateKey}) = {collectedSoFar}, ignorando herramienta.");
+            if (goal != null && have >= goal.sGoals[collectStateKey])
                 return false;
-            }
         }
 
-        // Buscar herramienta en la escena
+        // Encuentro la herramienta mÃ¡s cercana
         var tools = GameObject.FindGameObjectsWithTag(toolTag);
-        if (tools.Length == 0)
-            return false;
-
-        // Seleccionar la más cercana
+        if (tools.Length == 0) return false;
         var closest = tools.OrderBy(t => Vector3.Distance(t.transform.position, transform.position)).First();
-        target = closest;
 
+        target = closest;
         originalPosition = closest.transform.position;
         originalParent = closest.transform.parent;
-
         return true;
     }
 
     public override bool PostPerform()
     {
-        if (target != null)
-        {
-            // Añadir al inventario y actualizar creencias
-            G_Agent.inventory.AddItem(target);
-            G_Agent.beliefs.ModifyState("hasTool_" + toolTag, 1);
+        if (target == null) return false;
+        G_Agent.inventory.AddItem(target);
+        G_Agent.beliefs.ModifyState("hasTool_" + toolTag, 1);
 
-            // Guardar datos para devolver luego
-            var data = target.AddComponent<ToolData>();
-            data.originalPosition = originalPosition;
-            data.originalParent = originalParent;
+        var data = target.AddComponent<ToolData>();
+        data.originalPosition = originalPosition;
+        data.originalParent = originalParent;
 
-            target.SetActive(false);
-        }
+        target.SetActive(false);
         return true;
     }
 }

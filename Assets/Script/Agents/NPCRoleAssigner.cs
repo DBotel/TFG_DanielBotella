@@ -31,27 +31,46 @@ public class NPCRoleAssigner : MonoBehaviour
     [ContextMenu("ChangeRole")]
     void ChangeRole()
     {
+        agent.beliefs.states.Clear();
+        agent.inventory.items.Clear();
+        agent.goals.Clear();
+        agent.ResetPlan();
+
         ApplyRole();
+
+        foreach (var a in agent.GetComponents<GAction>())
+            a.SetupAction();
     }
     /// <summary>
     /// Configura el agente según el rol seleccionado.
     /// </summary>
     public void ApplyRole()
     {
+        agent.beliefs.states.Clear();
+        agent.inventory.items.Clear();
+        agent.goals.Clear();
+        agent.ResetPlan();
+
         switch (role)
         {
             case NPCRole.Lumberjack:
-                if (lumberjackAgent != null)
-                    lumberjackAgent.ConfigureLumberjack(desiredAmount);
-                else
-                    Debug.LogError("LumberjackAgent no encontrado en el NPC.");
+                agent.beliefs.states["hasTool_Axe"] = 0;
+                agent.beliefs.states["collected_WOOD"] = 0;
+                agent.beliefs.states["returnedTool_Axe"] = 0;
+
+                lumberjackAgent.ConfigureLumberjack(desiredAmount);
+                var takeL = GetComponent<GActionTakeTool>();
+                takeL.collectStateKey = "collected_WOOD";
                 break;
 
             case NPCRole.Miner:
-                if (miner != null)
-                    miner.ConfigureStoneMiner(desiredAmount);
-                else
-                    Debug.LogError("Miner no encontrado en el NPC.");
+                agent.beliefs.states["hasTool_Pickaxe"] = 0;
+                agent.beliefs.states["collected_STONE"] = 0;
+                agent.beliefs.states["returnedTool_Pickaxe"] = 0;
+
+                miner.ConfigureStoneMiner(desiredAmount);
+                var takeM = GetComponent<GActionTakeTool>();
+                takeM.collectStateKey = "collected_STONE";
                 break;
         }
     }

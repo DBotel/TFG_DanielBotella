@@ -1,5 +1,6 @@
-using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.AI;
+using UnityEngine;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class GActionReturnTool : GAction
@@ -7,34 +8,33 @@ public class GActionReturnTool : GAction
     [Header("Herramienta a devolver (Tag)")]
     public string toolTag;
 
-    private void Start()
+
+    public override void SetupAction()
     {
-        // Precondición: debo tener la herramienta para devolverla
-        string toolKey = "hasTool_" + toolTag;
-        if (!preconditions.ContainsKey(toolKey))
-            preconditions.Add(toolKey, 1);
+        Debug.Log($"SetupAction ReturnTool: toolTag={toolTag}, preconditions={preconditions.Count}, effects={effects.Count}");
+        preconditions.Clear();
+        effects.Clear();
+        string haveKey = "hasTool_" + toolTag;
+        preconditions[haveKey] = 1;
+        effects[haveKey] = -1;
+        effects["returnedTool_" + toolTag] = 1;
+    }
 
-        // Efecto: se quita la herramienta
-        if (!effects.ContainsKey(toolKey))
-            effects.Add(toolKey, -1);
-
-        // Efecto adicional: marca que la herramienta fue devuelta
-        string returnedKey = "returnedTool_" + toolTag;
-        if (!effects.ContainsKey(returnedKey))
-            effects.Add(returnedKey, 1);
-
-        Debug.Log($"[ReturnTool] Precondicion: {toolKey} >= 1, Efectos: {toolKey} -=1, {returnedKey} +=1");
+    public override bool IsAchievableGiven(Dictionary<string, int> conditions)
+    {
+        // Sólo alcanzable si realmente tengo la herramienta
+        return conditions.ContainsKey("hasTool_" + toolTag) &&
+               conditions["hasTool_" + toolTag] > 0;
     }
 
     public override bool PrePerform()
     {
+        Debug.Log("PrePerform ReturnTool");
         var tool = G_Agent.inventory.items.Find(i => i.CompareTag(toolTag));
         if (tool == null) return false;
         var data = tool.GetComponent<ToolData>();
         if (data == null) return false;
-
-        // Creamos un dummy para moverse al punto original
-        GameObject dummy = new GameObject("ReturnPoint");
+        var dummy = new GameObject("ReturnPoint");
         dummy.transform.position = data.originalPosition;
         target = dummy;
         return true;
@@ -50,20 +50,12 @@ public class GActionReturnTool : GAction
             var data = tool.GetComponent<ToolData>();
             tool.transform.position = data.originalPosition;
             tool.transform.parent = data.originalParent;
-
-            // Actualizamos creencias
             G_Agent.beliefs.ModifyState("hasTool_" + toolTag, -1);
             G_Agent.beliefs.ModifyState("returnedTool_" + toolTag, 1);
-
-            Debug.Log($"[ReturnTool] Herramienta devuelta. hasTool_{toolTag} = " +
-                      G_Agent.beliefs.GetState("hasTool_" + toolTag) +
-                      ", returnedTool_{toolTag} = " +
-                      G_Agent.beliefs.GetState("returnedTool_" + toolTag));
+            Debug.Log($"[ReturnTool] Devolved {toolTag}");
         }
-
-        if (target != null)
-            Destroy(target);
+        if (target != null) Destroy(target);
+        target = null;
         return true;
     }
 }
-
