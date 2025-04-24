@@ -81,7 +81,7 @@ public abstract class GAction : MonoBehaviour
     }
 
     // Método que verifica si la acción es alcanzable dado un conjunto de condiciones del mundo
-    public bool IsAchievableGiven(Dictionary<string, int> conditions)
+    public virtual bool IsAchievableGiven(Dictionary<string, int> conditions)
     {
         foreach (KeyValuePair<string, int> p in preconditions)
         {

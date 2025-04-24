@@ -6,8 +6,10 @@ TagManager:
   tags:
   - ConstruccionEdificio
   - Axe
+  - Pickaxe
   - Tree
   - WanderPoint
+  - Ore
   layers:
   - Default
   - TransparentFX

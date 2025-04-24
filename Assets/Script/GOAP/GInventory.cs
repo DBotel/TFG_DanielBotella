@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class GInventory : MonoBehaviour
@@ -23,6 +24,16 @@ public class GInventory : MonoBehaviour
             if (item.CompareTag(tag))
                 return true;
 
+        }
+        return false;
+    }
+
+    public bool HasTool(string toolTag)
+    {
+        foreach (GameObject tool in items)
+        {
+            if (tool.CompareTag(toolTag))
+                return true;
         }
         return false;
     }

@@ -198,7 +198,6 @@ public class NPC : GAgent
     [ContextMenu("Job: 1 Hacha")]
     public void Job_Craft5Arrows()
     {
-        DestroyAllActions();
         AssignCraftMission("Axe", 1);
     }
     [ContextMenu("DestroyAllActions")]
@@ -206,14 +205,12 @@ public class NPC : GAgent
     {
         actions.Clear();
         goals.Clear();
-        DestroyAllActions();
 
     }
 
     [ContextMenu("Misión: 400 Madera con Hacha")]
     public void TestJob1()
     {
-        DestroyAllActions();
        
         missionProgress = 0;
         missionResourceType = TownResourcesTypes.WOOD;
