@@ -55,7 +55,7 @@ public abstract class GAction : MonoBehaviour
         effects = new Dictionary<string, int>();
     }
 
-    public void Awake()
+    public virtual void Awake()
     {
         agent = this.gameObject.GetComponent<NavMeshAgent>();
 
