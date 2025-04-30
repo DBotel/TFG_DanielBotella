@@ -138,7 +138,11 @@ public class GAgent : MonoBehaviour
         {
             var toRemove = goals.Where(kv => kv.Key.remove).Select(kv => kv.Key).ToList();
             foreach (var g in toRemove)
+            {
+                string completedGoal = string.Join(", ", g.sGoals.Select(s => s.Key + ">=" + s.Value));
+                Debug.LogError("[GOAL COMPLETED] " + completedGoal);
                 goals.Remove(g);
+            }
             planner = null;
         }
     }

@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class GActionEatFood : GAction
 {
+    NPCBasicNeeds needs;
+    public float eatDuration = 2f;
     public float foodCost = 5f;
-    NPCBasicNeeds npcNeeds;
 
     public override void Awake()
     {
-        npcNeeds = GetComponent<NPCBasicNeeds>();
-        target = GameObject.FindGameObjectWithTag("FoodStore");
+        needs = GetComponent<NPCBasicNeeds>();
         base.Awake();
     }
 
@@ -17,29 +17,31 @@ public class GActionEatFood : GAction
         preconditions.Clear();
         effects.Clear();
 
-        preconditions["isHungry"] = 1;
         preconditions["hasMoney"] = 1;
-
         effects["hungerRestored"] = 1;
-        effects["moneySpent"] = 1;
 
+        targetTag = "FoodStore";
 
-        if (npcNeeds.money >= foodCost)
-        {
-            target = GameObject.FindGameObjectWithTag("FoodStore");
-        }
+        duration = eatDuration;
+    }
+
+    public override bool IsAchievableGiven(System.Collections.Generic.Dictionary<string, int> conditions)
+    {
+        return needs.money >= foodCost;
     }
 
     public override bool PrePerform()
     {
-        return true;
+        target = GameObject.FindGameObjectWithTag(targetTag);
+        return target != null;
     }
 
     public override bool PostPerform()
     {
-        npcNeeds.money -= foodCost;
-        npcNeeds.hunger += 50;
-        npcNeeds.hunger = Mathf.Clamp(npcNeeds.hunger, 0f, 100f);
+        Debug.Log("[EatFood] PostPerform ejecutado.");
+        needs.money -= foodCost;
+        needs.hunger = 100f;
+        needs.hunger = Mathf.Clamp(needs.hunger, 0f, 100f);
         return true;
     }
 }

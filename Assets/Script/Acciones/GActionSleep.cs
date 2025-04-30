@@ -2,11 +2,15 @@ using UnityEngine;
 
 public class GActionSleep : GAction
 {
-    NPCBasicNeeds npcNeeds;
+    NPCBasicNeeds needs;
+
+    public float sleepAmount = 60f;
+    public float sleepDuration = 5f;
 
     public override void Awake()
     {
-        npcNeeds = GetComponent<NPCBasicNeeds>();
+        base.Awake();
+        needs = GetComponent<NPCBasicNeeds>();
     }
 
     public override void SetupAction()
@@ -14,21 +18,24 @@ public class GActionSleep : GAction
         preconditions.Clear();
         effects.Clear();
 
-        preconditions["isTired"] = 1;
-
         effects["rested"] = 1;
+       // targetTag = "House";
+        duration = sleepDuration;
     }
 
     public override bool PrePerform()
     {
-        target = npcNeeds.house;
+        target = needs.house;
+        Debug.Log("[Sleep] NPC va a dormir a: " + (target != null ? target.name : "null"));
         return target != null;
     }
 
     public override bool PostPerform()
     {
-        npcNeeds.sleep += 80;
-        npcNeeds.sleep = Mathf.Clamp(npcNeeds.sleep, 0f, 100f);
+        Debug.Log("[Sleep] NPC ha dormido. +" + sleepAmount + " sueño");
+        needs.sleep = 100;
+        needs.sleep = Mathf.Clamp(needs.sleep, 0f, 100f);
+        
         return true;
     }
 }

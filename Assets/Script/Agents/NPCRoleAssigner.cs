@@ -26,7 +26,7 @@ public class NPCRoleAssigner : MonoBehaviour
 
     void Start()
     {
-        ApplyRole();
+        //ApplyRole();
     }
     [ContextMenu("ChangeRole")]
     void ChangeRole()

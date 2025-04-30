@@ -11,6 +11,7 @@ public class GActionFarmResource : GAction
 
     public override void SetupAction()
     {
+        if(resourceTag=="")return;
         Debug.Log($"SetupAction FarmResource: resourceTag={resourceTag}, preconditions={preconditions.Count}, effects={effects.Count}");
         preconditions.Clear();
         effects.Clear();
@@ -33,6 +34,7 @@ public class GActionFarmResource : GAction
 
     public override bool PrePerform()
     {
+        if (resourceTag == "") return false;
         Debug.Log("PrePerform FarmResource");
         var nodes = GameObject.FindGameObjectsWithTag(resourceTag);
         if (nodes.Length == 0) return false;

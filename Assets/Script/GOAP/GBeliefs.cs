@@ -25,4 +25,12 @@ public class GBeliefs : MonoBehaviour
         if (states.ContainsKey(key))
             states.Remove(key);
     }
+
+    public void SetState(string key, int value)
+    {
+        if (states.ContainsKey(key))
+            states[key] = value;
+        else
+            states.Add(key, value);
+    }
 }
