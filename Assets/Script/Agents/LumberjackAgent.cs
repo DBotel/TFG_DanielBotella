@@ -19,20 +19,17 @@ public class LumberjackAgent : MonoBehaviour
     {
         agent.ResetPlan();
         agent.goals.Clear();
-
-        // Ajuste de acciones
+        
         takeTool.toolTag = "Axe";
         takeTool.collectStateKey = "collected_WOOD";
         farm.resourceTag = "Tree";
         farm.resourceType = TownResourcesTypes.WOOD;
         farm.amountNeeded = desiredAmount;
         ret.toolTag = "Axe";
-
-        // Meta: recolectar madera
+        
         string collectKey = "collected_" + farm.resourceType;
         agent.goals.Add(new SubGoal(collectKey, desiredAmount, true), 3);
-
-        // Meta: devolver herramienta (ahora basada en returnedTool)
+        
         string returnKey = "returnedTool_" + takeTool.toolTag;
         agent.goals.Add(new SubGoal(returnKey, 1, true), 2);
     }

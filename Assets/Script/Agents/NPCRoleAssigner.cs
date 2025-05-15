@@ -1,19 +1,19 @@
 using UnityEngine;
-
+public enum NPCRole { Lumberjack, Miner }
 /// <summary>
 /// Asigna un rol a un NPC y configura su agente correspondiente.
 /// </summary>
 [RequireComponent(typeof(GAgent))]
 public class NPCRoleAssigner : MonoBehaviour
 {
-    public enum NPCRole { Lumberjack, Miner }
+    
     public NPCRole role;
     public int desiredAmount = 5;
 
     private GAgent agent;
     private LumberjackAgent lumberjackAgent;
     private StoneMiner miner;
-    // Añade aquí MinerAgent si lo creas
+    // Aï¿½ade aquï¿½ MinerAgent si lo creas
     // private MinerAgent minerAgent;
 
     void Awake()
@@ -29,7 +29,7 @@ public class NPCRoleAssigner : MonoBehaviour
         //ApplyRole();
     }
     [ContextMenu("ChangeRole")]
-    void ChangeRole()
+    public void ChangeRole()
     {
         agent.beliefs.states.Clear();
         agent.inventory.items.Clear();
@@ -42,7 +42,7 @@ public class NPCRoleAssigner : MonoBehaviour
             a.SetupAction();
     }
     /// <summary>
-    /// Configura el agente según el rol seleccionado.
+    /// Configura el agente segï¿½n el rol seleccionado.
     /// </summary>
     public void ApplyRole()
     {
@@ -54,6 +54,7 @@ public class NPCRoleAssigner : MonoBehaviour
         switch (role)
         {
             case NPCRole.Lumberjack:
+                Debug.LogError("Lumberjack");
                 agent.beliefs.states["hasTool_Axe"] = 0;
                 agent.beliefs.states["collected_WOOD"] = 0;
                 agent.beliefs.states["returnedTool_Axe"] = 0;
@@ -64,6 +65,7 @@ public class NPCRoleAssigner : MonoBehaviour
                 break;
 
             case NPCRole.Miner:
+                Debug.LogError("Miner");
                 agent.beliefs.states["hasTool_Pickaxe"] = 0;
                 agent.beliefs.states["collected_STONE"] = 0;
                 agent.beliefs.states["returnedTool_Pickaxe"] = 0;
