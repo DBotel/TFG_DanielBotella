@@ -7,7 +7,7 @@ public class TownHall : MonoBehaviour
     public Town_Resources town_resources;
     public GameUI gameUI;
 
-    private void Awake()
+    private void Awake()    
     {
         town_resources = new Town_Resources();
         town_resources.TownHall = this;

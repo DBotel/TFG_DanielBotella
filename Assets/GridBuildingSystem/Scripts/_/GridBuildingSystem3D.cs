@@ -18,6 +18,7 @@ public class GridBuildingSystem3D : MonoBehaviour {
     private PlacedObjectTypeSO.Dir dir;
 
     public bool canAfford=false;
+    public bool building=false;
     public Vector3 mousePosition;
     public int gridWidth = 10;
     public int gridHeight = 10;
@@ -82,6 +83,10 @@ public class GridBuildingSystem3D : MonoBehaviour {
     }
 
     private void Update() {
+        if (building)
+        {
+            mousePosition = Mouse3D.GetMouseWorldPosition();
+        }
         if (Input.GetMouseButtonDown(0) && placedObjectTypeSO != null) {
              mousePosition = Mouse3D.GetMouseWorldPosition();
             grid.GetXZ(mousePosition, out int x, out int z);

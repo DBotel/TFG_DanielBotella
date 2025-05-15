@@ -16,6 +16,7 @@ public class BuildBuilding : MonoBehaviour
     bool isSubscribed = false;
     public void SelectBuilding()
     {
+        gridBuildingSystem.building = true;
         print("Selected");
         bool canAfford;
         if (second_amount == 0)
@@ -66,7 +67,9 @@ public class BuildBuilding : MonoBehaviour
         isSubscribed = false;
         townHall.CallRefreshUI();
         ActivateAllConstructionObjects(true);
-        Debug.Log("BuildBuilding: recursos descontados y modo construcción desactivado");
+        Debug.Log("BuildBuilding: recursos descontados y modo construcciï¿½n desactivado");
+        gridBuildingSystem.building = false;
+
     }
 
     private void ActivateAllConstructionObjects(bool _active)
