@@ -15,6 +15,7 @@ public class GActionWander : GAction
 
     public override bool PrePerform()
     {
+        Debug.LogError("WANDER PREPERFORM");
         Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
         randomDirection += transform.position;
         NavMeshHit navHit;
@@ -26,6 +27,8 @@ public class GActionWander : GAction
 
     public override bool PostPerform()
     {
+        Debug.LogError("WANDER POSTPERFORM");
+
         if (target != null) Destroy(target);
         return true;
     }

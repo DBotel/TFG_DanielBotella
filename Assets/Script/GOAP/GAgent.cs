@@ -136,13 +136,44 @@ public class GAgent : MonoBehaviour
         // 5) Si ya no quedan acciones, limpia metas y resetea planner
         if (actionQueue != null && actionQueue.Count == 0)
         {
-            var toRemove = goals.Where(kv => kv.Key.remove).Select(kv => kv.Key).ToList();
-            foreach (var g in toRemove)
+            var toRemove = new List<SubGoal>();
+
+            foreach (var goal in goals)
             {
-                string completedGoal = string.Join(", ", g.sGoals.Select(s => s.Key + ">=" + s.Value));
-                Debug.LogError("[GOAL COMPLETED] " + completedGoal);
-                goals.Remove(g);
+                if (!goal.Key.remove)
+                    continue;
+
+                bool satisfied = true;
+                foreach (var req in goal.Key.sGoals)
+                {
+                    if (!beliefs.states.ContainsKey(req.Key) || beliefs.states[req.Key] < req.Value)
+                    {
+                        satisfied = false;
+                        break;
+                    }
+                }
+
+                if (satisfied)
+                {
+                    string completed = string.Join(", ", goal.Key.sGoals.Select(kv => kv.Key + ">=" + kv.Value));
+                    Debug.LogError("[GOAL COMPLETED] " + completed);
+                    toRemove.Add(goal.Key);
+
+                    // Limpieza automática de creencias relacionadas con el objetivo cumplido
+                    foreach (var req in goal.Key.sGoals.Keys)
+                    {
+                        if (beliefs.states.ContainsKey(req))
+                        {
+                            Debug.Log($"[Belief] Limpiando: {req}");
+                            beliefs.RemoveState(req);
+                        }
+                    }
+                }
             }
+
+            foreach (var g in toRemove)
+                goals.Remove(g);
+
             planner = null;
         }
     }

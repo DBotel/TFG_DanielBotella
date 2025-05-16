@@ -22,7 +22,7 @@ public class GActionReturnTool : GAction
 
     public override bool IsAchievableGiven(Dictionary<string, int> conditions)
     {
-        // Sólo alcanzable si realmente tengo la herramienta
+        // Sï¿½lo alcanzable si realmente tengo la herramienta
         return conditions.ContainsKey("hasTool_" + toolTag) &&
                conditions["hasTool_" + toolTag] > 0;
     }
@@ -52,7 +52,12 @@ public class GActionReturnTool : GAction
             tool.transform.parent = data.originalParent;
             G_Agent.beliefs.ModifyState("hasTool_" + toolTag, -1);
             G_Agent.beliefs.ModifyState("returnedTool_" + toolTag, 1);
+            G_Agent.beliefs.SetState("returnedTool_" + toolTag, 1);
             Debug.Log($"[ReturnTool] Devolved {toolTag}");
+            
+            Debug.LogError("[ReturnTool] Devuelta " + toolTag + ": hasTool_" + toolTag +
+                      " = " + G_Agent.beliefs.GetState("hasTool_" + toolTag) +
+                      ", returnedTool_" + toolTag + " = " + G_Agent.beliefs.GetState("returnedTool_" + toolTag));
         }
         if (target != null) Destroy(target);
         target = null;

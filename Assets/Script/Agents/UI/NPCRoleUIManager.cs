@@ -15,6 +15,8 @@ public class NPCRoleUIManager : MonoBehaviour
     public GameObject[] otherPanels;
 
     private NPCRoleAssigner selectedAssigner;
+    private NPCRole lastSelectedRole;
+    
 
     [Header("NPC Picking")]
     [Tooltip("Layer de los NPCs")]
@@ -51,6 +53,11 @@ public class NPCRoleUIManager : MonoBehaviour
             //HidePanel();
         }
     }
+    /*
+    bool SameRole()
+    {
+        
+    }*/
     void HideOtherPanels()
     {
         foreach (var panel in otherPanels)
@@ -66,10 +73,14 @@ public class NPCRoleUIManager : MonoBehaviour
     {
 
         selectedAssigner = assigner;
+        lastSelectedRole=assigner.role;
         npcPanel.SetActive(true);
+        
         
         roleDropdown.value = (int)assigner.role;
         amountInput.text   = assigner.desiredAmount.ToString();
+        
+        
     }
 
     void HidePanel()
@@ -107,9 +118,7 @@ public class NPCRoleUIManager : MonoBehaviour
         foreach (var action in selectedAssigner.GetComponents<GAction>())
             action.SetupAction();
        selectedAssigner.ApplyRole();
-        
        
-
         HidePanel();
         
     }

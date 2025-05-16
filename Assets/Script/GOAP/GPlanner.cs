@@ -22,7 +22,7 @@ public class GPlanner
 {
     public Queue<GAction> plan(GAgent agent, List<GAction> actions, Dictionary<string, int> goal)
     {
-        // Filtrar acciones alcanzables según estado inicial del agente
+        // Filtrar acciones alcanzables segï¿½n estado inicial del agente
         List<GAction> usableActions = actions.Where(a => a.IsAchievable()).ToList();
 
         // Estado inicial a partir de creencias
@@ -62,7 +62,7 @@ public class GPlanner
     {
         bool foundPath = false;
 
-        // Por cada acción alcanzable desde el estado del padre
+        // Por cada acciï¿½n alcanzable desde el estado del padre
         foreach (GAction action in usableActions)
         {
             if (!action.IsAchievableGiven(parent.state))
@@ -83,12 +83,13 @@ public class GPlanner
             // Si el nuevo estado cumple la meta, agregar a leaves
             if (GoalAchieved(goal, newState))
             {
+                Debug.Log("[Planner] Leaf created with state: " + string.Join(", ", newState.Select(kv => kv.Key + "=" + kv.Value)));
                 leaves.Add(node);
                 foundPath = true;
             }
             else
             {
-                // Crear subconjunto sin reutilizar la misma acción para evitar loops
+                // Crear subconjunto sin reutilizar la misma acciï¿½n para evitar loops
                 List<GAction> subset = usableActions.Where(a => !a.Equals(action)).ToList();
                 bool found = BuildGraph(node, leaves, subset, goal);
                 if (found)
@@ -103,8 +104,13 @@ public class GPlanner
         foreach (var g in goal)
         {
             if (!state.ContainsKey(g.Key) || state[g.Key] < g.Value)
+            {
+                Debug.LogWarning($"[Planner] Goal NOT achieved: {g.Key}>={g.Value} â€” current = {(state.ContainsKey(g.Key) ? state[g.Key].ToString() : "null")}");
                 return false;
+            }
+                
         }
+        Debug.LogError("[Planner] GOAL ACHIEVED: " + string.Join(", ", goal.Select(kv => kv.Key + ">=" + kv.Value)));
         return true;
     }
 }
