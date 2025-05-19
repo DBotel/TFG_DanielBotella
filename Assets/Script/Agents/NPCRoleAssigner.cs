@@ -9,6 +9,8 @@ public class NPCRoleAssigner : MonoBehaviour
     
     public NPCRole role;
     public int desiredAmount = 5;
+    public NPCProfile profile;
+
 
     private GAgent agent;
     private LumberjackAgent lumberjackAgent;

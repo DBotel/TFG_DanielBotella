@@ -23,6 +23,8 @@ public class NPCRoleUIManager : MonoBehaviour
     public LayerMask npcLayerMask;
     [Tooltip("Radio para detectar NPCs alrededor del punto clicado")]
     public float pickRadius = 0.5f;
+
+    public NPCProfile profile;
     void Start()
     {
         npcPanel.SetActive(false);
@@ -44,6 +46,7 @@ public class NPCRoleUIManager : MonoBehaviour
                 var assigner = hits[0].GetComponent<NPCRoleAssigner>();
                 if (assigner != null)
                 {
+                    profile = assigner.profile;
                     HideOtherPanels();
                     ShowPanel(assigner);
                     return;
@@ -71,7 +74,7 @@ public class NPCRoleUIManager : MonoBehaviour
 
     void ShowPanel(NPCRoleAssigner assigner)
     {
-
+        DialogueUIManager.Instance.ShowDialogue(assigner);      
         selectedAssigner = assigner;
         lastSelectedRole=assigner.role;
         npcPanel.SetActive(true);
