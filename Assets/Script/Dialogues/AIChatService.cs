@@ -35,12 +35,23 @@ public class AIChatService : MonoBehaviour
     {
         // 1) Recorta historial como siempre
         TrimHistory(npc);
-
-        // 2) Construye sólo mensajes de sistema: backstory + historial
+        
         var msgList = new List<MessageData>
         {
-            new MessageData { role = "system", content = npc.backstory }
+            new MessageData {
+                role = "system",
+                content =
+                    // contexto general
+                    "Estás en un videojuego ambientado en la Edad Media de habla hispana. " +
+                    // descripción de quién eres
+                    npc.backstory +
+                    // instrucciones de estilo
+                    "Sólo hablas en español, con vocabulario y tono medieval, " +
+                    // límite de caracteres
+                    $"y tus respuestas no exceden {npc.maxResponseLength} caracteres."
+            }
         };
+        
         msgList.Add(new MessageData {
             role = "system",
             content = $"Porfavor , limita mucho tu respuesta , debe de ser un saludo , 100 caracteres máximo."
@@ -92,16 +103,21 @@ public class AIChatService : MonoBehaviour
     {
         TrimHistory(npc);
 
-        // 1) Construye la lista de mensajes tipada
         var msgList = new List<MessageData>
         {
-            new MessageData { role = "system", content = npc.backstory }
+            new MessageData {
+                role = "system",
+                content =
+                    // contexto general
+                    "Estás en un videojuego ambientado en la Edad Media de habla hispana. " +
+                    // descripción de quién eres
+                    npc.backstory  +
+                    // instrucciones de estilo
+                    "Sólo hablas en español, con vocabulario y tono medieval, " +
+                    // límite de caracteres
+                    $"y tus respuestas no exceden {npc.maxResponseLength} caracteres."
+            }
         };
-        // instrucción de límite de caracteres
-        msgList.Add(new MessageData {
-            role = "system",
-            content = $"Porfavor , limita tu respuesta a {npc.maxResponseLength} carácteres máximos aproximadamente."
-        });
         foreach (var h in npc.history)
             msgList.Add(new MessageData { role = h.role, content = h.content });
         msgList.Add(new MessageData { role = "user", content = playerInput });
