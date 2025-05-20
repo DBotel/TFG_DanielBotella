@@ -11,11 +11,9 @@ public class CraftItem : GAction
 
     void Start()
     {
-        // 1) Inicializa diccionarios (Unity no lo hace al AddComponent)
         if (preconditions == null) preconditions = new Dictionary<string, int>();
         if (effects == null) effects = new Dictionary<string, int>();
 
-        // 2) Busca la receta y la estación PARA PODER DEFINIR preconditions y effects
         ToolCrafter[] stations = FindObjectsOfType<ToolCrafter>();
         float minDist = Mathf.Infinity;
         foreach (var cs in stations)
@@ -33,26 +31,22 @@ public class CraftItem : GAction
 
         if (recipe == null)
         {
-            Debug.LogError($"{name}: no se encontró receta '{recipeID}' ni estación.");
+            Debug.LogError($"{name}: no se encontrï¿½ receta '{recipeID}' ni estaciï¿½n.");
             return;
         }
 
-        // 3) Define preconditions según los costes de la receta
         preconditions.Clear();
         foreach (var cost in recipe.costs)
         {
-            // el planner ahora sabe que necesita estos recursos
             preconditions[cost.type.ToString()] = cost.amount;
         }
 
-        // 4) Define efectos (clave-meta) para el planner
         effects.Clear();
         effects.Add(recipeID + "Crafted", 1);
 
-        if (crafter == null) { Debug.LogError("No se encontró crafteadora"); }
+        if (crafter == null) { Debug.LogError("No se encontrï¿½ crafteadora"); }
 
 
-        // 5) Ahora, antes de ejecutar, comprueba stock real
         var hall = GetComponent<NPC>().town;
         foreach (var cost in recipe.costs)
         {
@@ -64,11 +58,9 @@ public class CraftItem : GAction
             }
         }
 
-        // 6) Preparamos target y duración
         target = crafter.gameObject;
         duration = recipe.craftTime;
 
-        // 7) Marcamos la acción como corriendo
         runing = true;
         //effects[recipeID + "Crafted"] = 1;
     }
@@ -84,14 +76,11 @@ public class CraftItem : GAction
     public override bool PostPerform()
     {
         if (!canCraft) return false;
-        // 1) Descontar recursos
         foreach (var cost in recipe.costs)
             GetComponent<NPC>().town.town_resources.SubtractResourceAmount(cost.type, cost.amount);
 
-        // 2) Instanciar el objeto fabricado
         Instantiate(recipe.prefab, crafter.outputPoint.position, Quaternion.identity);
 
-        // 3) Notificar al NPC
         GetComponent<NPC>().OnItemCrafted(recipeID);
 
         return true;

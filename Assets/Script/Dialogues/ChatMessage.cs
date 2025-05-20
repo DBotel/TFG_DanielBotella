@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 [Serializable]
 public class ChatMessage {
-    public string role;    // "system", "user" o "assistant"
+    public string role;  
     public string content;
 }
 

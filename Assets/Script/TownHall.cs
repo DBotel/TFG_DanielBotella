@@ -12,12 +12,14 @@ public class TownHall : MonoBehaviour
         town_resources = new Town_Resources();
         town_resources.TownHall = this;
 
-        //setear variables de prueba
         town_resources.SetResourceAmount(TownResourcesTypes.WOOD, 100);
         town_resources.SetResourceAmount(TownResourcesTypes.STONE, 50);
         town_resources.SetResourceAmount(TownResourcesTypes.MONEY, 200);
 
         Debug.Log("TownHall: recursos inicializados");
+        
+        gameUI= GameObject.Find("UI").GetComponent<GameUI>();
+        CallRefreshUI();
 
     }
     public bool CanAfford(TownResourcesTypes firstType, int firstAmount, TownResourcesTypes secondType, int secondAmount, bool two)
@@ -39,6 +41,6 @@ public class TownHall : MonoBehaviour
 
     public void CallRefreshUI()
     {
-        gameUI.RefreshUI();
+       if(gameUI)gameUI.RefreshUI();
     }
 }

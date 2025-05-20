@@ -13,7 +13,6 @@ public class GActionWait : GAction
 
     public override bool PrePerform()
     {
-        // No necesita target, simplemente se queda quieto
         Debug.Log("[Wait] Iniciando espera de " + waitTime + " segundos en el lugar.");
         return true;
     }

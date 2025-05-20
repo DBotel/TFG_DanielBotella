@@ -22,7 +22,6 @@ public class GActionReturnTool : GAction
 
     public override bool IsAchievableGiven(Dictionary<string, int> conditions)
     {
-        // S�lo alcanzable si realmente tengo la herramienta
         return conditions.ContainsKey("hasTool_" + toolTag) &&
                conditions["hasTool_" + toolTag] > 0;
     }

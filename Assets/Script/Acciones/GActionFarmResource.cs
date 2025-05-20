@@ -16,11 +16,9 @@ public class GActionFarmResource : GAction
         preconditions.Clear();
         effects.Clear();
 
-        // 1) Necesito la herramienta correcta
         string toolKey = "hasTool_" + (resourceType == TownResourcesTypes.WOOD ? "Axe" : "Pickaxe");
         preconditions[toolKey] = 1;
 
-        // 2) Efecto en el plan: voy a recolectar X unidades
         string collectKey = "collected_" + resourceType;
         int val = 1;
         var nodes = GameObject.FindGameObjectsWithTag(resourceTag);

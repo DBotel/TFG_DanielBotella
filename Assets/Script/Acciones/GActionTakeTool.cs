@@ -20,11 +20,9 @@ public class GActionTakeTool : GAction
         preconditions.Clear();
         effects.Clear();
 
-        // Sólo puedo tomar la herramienta si NO la tengo
         string haveKey = "hasTool_" + toolTag;
         preconditions[haveKey] = 0;
 
-        // Y al tomarla, la tendré
         effects[haveKey] = 1;
 
         targetTag = toolTag;
@@ -35,11 +33,9 @@ public class GActionTakeTool : GAction
     {
         Debug.Log("PrePerform TakeTool");
 
-        // Evito volver a tomarla si ya la tengo en inventario
         if (G_Agent.inventory.HasTool(toolTag))
             return false;
 
-        // Evito tomarla si ya recolecté suficiente
         if (!string.IsNullOrEmpty(collectStateKey))
         {
             int have = G_Agent.beliefs.GetState(collectStateKey);
@@ -48,7 +44,6 @@ public class GActionTakeTool : GAction
                 return false;
         }
 
-        // Encuentro la herramienta más cercana
         var tools = GameObject.FindGameObjectsWithTag(toolTag);
         if (tools.Length == 0) return false;
         var closest = tools.OrderBy(t => Vector3.Distance(t.transform.position, transform.position)).First();

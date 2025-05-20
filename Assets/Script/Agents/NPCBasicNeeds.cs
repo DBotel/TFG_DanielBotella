@@ -6,6 +6,8 @@ public class NPCBasicNeeds : MonoBehaviour
     public float hunger = 100f;
     public float sleep = 100f;
     public GameObject house;
+    
+    public float happiness = 100f;
 
     GAgent agent;
 
@@ -24,22 +26,28 @@ public class NPCBasicNeeds : MonoBehaviour
     {
         hunger -= Time.deltaTime * 0.05f;
         sleep -= Time.deltaTime * 0.02f;
+        happiness -= Time.deltaTime * 0.15f;
 
         hunger = Mathf.Clamp(hunger, 0f, 100f);
         sleep = Mathf.Clamp(sleep, 0f, 100f);
+        happiness = Mathf.Clamp(happiness, 0f, 100f);
     }
 
    void EvaluateNeeds()
 {
-    // Actualizamos la creencia sobre el dinero de forma directa
     agent.beliefs.SetState("hasMoney", money >= 5f ? 1 : 0);
-
+    agent.beliefs.SetState("isHungry", hunger < 20f ? 1 : 0);
+    agent.beliefs.SetState("isTired", sleep < 20f ? 1 : 0);
+    
+    agent.beliefs.SetState("lowHappiness", happiness < 30f ? 1 : 0);
+    agent.beliefs.SetState("highHappiness", happiness > 70f ? 1 : 0);
+    
     bool isStarving = hunger < 5f;
     bool isExhausted = sleep < 5f;
     bool isHungry = hunger < 20f;
     bool isTired = sleep < 20f;
+    bool isUnHappy = happiness < 20f;
 
-    // Limpia metas ya satisfechas (remove = true y condición ya cumplida)
     var completed = agent.goals.Keys
         .Where(goal => goal.remove && goal.sGoals.All(s =>
             agent.beliefs.states.ContainsKey(s.Key) &&
@@ -52,7 +60,6 @@ public class NPCBasicNeeds : MonoBehaviour
         agent.goals.Remove(g);
     }
 
-    // Emergencia: prioridad máxima
     if (isStarving || isExhausted)
     {
         agent.ResetPlan();
@@ -67,11 +74,15 @@ public class NPCBasicNeeds : MonoBehaviour
         return;
     }
 
-    // Si está haciendo algo, no interrumpir
+    if(happiness<30f && !agent.beliefs.states.ContainsKey("happinessRestored"))
+    {
+        agent.ResetPlan();
+        agent.goals.Clear();
+        agent.goals.Add(new SubGoal("happinessRestored", 1, true), 12);
+    }
     if (agent.currentAction != null && agent.currentAction.runing)
         return;
 
-    // Necesidades moderadas
     if (isHungry || isTired)
     {
         agent.goals.Clear();
@@ -82,8 +93,11 @@ public class NPCBasicNeeds : MonoBehaviour
         if (isTired && !agent.beliefs.states.ContainsKey("rested"))
             agent.goals.Add(new SubGoal("rested", 1, true), isHungry ? 5 : 9);
     }
-
-    // Meta por defecto: deambular si está libre
+    
+    if(isUnHappy && !agent.beliefs.states.ContainsKey("happinessRestored"))
+    {
+        agent.goals.Add(new SubGoal("happinessRestored", 1, true), 8);
+    }
     if (agent.goals.Count == 0 &&
         (agent.currentAction == null || !agent.currentAction.runing) &&
         !agent.goals.Any(g => g.Key.sGoals.ContainsKey("isWandering")))

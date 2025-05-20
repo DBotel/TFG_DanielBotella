@@ -249,7 +249,6 @@ public class GridBuildingSystem3D : MonoBehaviour {
         Color color = new Color(0f, 1f, 0f, 0.05f); // Verde muy transparente
         material.color = color;
 
-        // ¡IMPORTANTE! Habilitar el modo transparente
         material.SetFloat("_Surface", 1); // 0 = Opaque, 1 = Transparent
         material.SetOverrideTag("RenderType", "Transparent");
         material.SetInt("_ZWrite", 0);

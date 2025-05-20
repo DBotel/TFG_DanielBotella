@@ -3,9 +3,9 @@ using UnityEngine;
 [CreateAssetMenu( menuName = "Craftable/Item")]
 public class CraftableItemSO : ScriptableObject
 {
-    public string itemID;      // ej. "Arrow", "Sword"
-    public GameObject prefab;    // Prefab que se coloca al terminar
-    public float craftTime = 5f; // Segundos
+    public string itemID;      
+    public GameObject prefab;    
+    public float craftTime = 5f; 
 
     [System.Serializable]
     public struct Cost
@@ -13,5 +13,5 @@ public class CraftableItemSO : ScriptableObject
         public TownResourcesTypes type;
         public int amount;
     }
-    public Cost[] costs;         // Lista de recursos necesarios
+    public Cost[] costs;         
 }

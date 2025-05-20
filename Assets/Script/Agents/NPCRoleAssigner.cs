@@ -1,8 +1,6 @@
 using UnityEngine;
 public enum NPCRole { Lumberjack, Miner }
-/// <summary>
-/// Asigna un rol a un NPC y configura su agente correspondiente.
-/// </summary>
+
 [RequireComponent(typeof(GAgent))]
 public class NPCRoleAssigner : MonoBehaviour
 {
@@ -15,8 +13,6 @@ public class NPCRoleAssigner : MonoBehaviour
     private GAgent agent;
     private LumberjackAgent lumberjackAgent;
     private StoneMiner miner;
-    // A�ade aqu� MinerAgent si lo creas
-    // private MinerAgent minerAgent;
 
     void Awake()
     {
@@ -43,9 +39,6 @@ public class NPCRoleAssigner : MonoBehaviour
         foreach (var a in agent.GetComponents<GAction>())
             a.SetupAction();
     }
-    /// <summary>
-    /// Configura el agente seg�n el rol seleccionado.
-    /// </summary>
     public void ApplyRole()
     {
         agent.beliefs.states.Clear();

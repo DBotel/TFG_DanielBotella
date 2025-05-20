@@ -12,7 +12,6 @@ public class CameraController : MonoBehaviour
 
     public bool locked = false;
 
-    //Cursor
     public Texture2D customCursor;
     public Vector2 hotSpot = Vector2.zero;
     public CursorMode cursorMode = CursorMode.Auto;
@@ -44,7 +43,6 @@ public class CameraController : MonoBehaviour
         if (Input.mousePosition.y > Screen.height - edgeScrollSize)
             moveDir.z = 1f;
 
-        // Normaliza para evitar que se mueva más en diagonal
         moveDir = transform.forward * moveDir.z + transform.right * moveDir.x;
         moveDir.y = 0;
 
@@ -62,7 +60,7 @@ public class CameraController : MonoBehaviour
 
     private void HandleRotation()
     {
-        if (Input.GetMouseButton(1)) // botón derecho
+        if (Input.GetMouseButton(1))
         {
             float rotation = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
             transform.Rotate(0f, rotation, 0f, Space.World);

@@ -20,7 +20,6 @@ public class GetItem : GAction
     public override bool PrePerform()
     {
 
-        // Buscar el objeto más cercano con el tag deseado
         GameObject[] items = GameObject.FindGameObjectsWithTag(itemTag);
         float closestDist = Mathf.Infinity;
         GameObject closest = null;
@@ -39,7 +38,7 @@ public class GetItem : GAction
 
         if (closest == null)
         {
-            Debug.Log($"{gameObject.name} no encontró ningún {itemTag}");
+            Debug.Log($"{gameObject.name} no encontrï¿½ ningï¿½n {itemTag}");
             return false;
         }
 

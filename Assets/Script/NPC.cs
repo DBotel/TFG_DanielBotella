@@ -3,11 +3,11 @@ using System.Linq;
 using UnityEngine;
 public enum JobType
 {
-    Lumberjack,  // Leñador
-    Miner,       // Minero
-    Farmer,      // Agricultor
-    Builder,     // Constructor
-    Healer       // Sanador
+    Lumberjack,  
+    Miner,       
+    Farmer,      
+    Builder,     
+    Healer       
 }
 
 
@@ -18,10 +18,10 @@ public class NPC : GAgent
     [Header("Misión de recolección")]
     public TownResourcesTypes missionResourceType;
     public string missionResourceTag;
-    public bool needTool;          // ¿Necesita herramienta?
-    public bool hasTool;          // ¿Tiene la herramienta?
-    public string toolTag;           // p.ej. "Axe"
-    public int missionTarget;     // 0 = infinito
+    public bool needTool;          
+    public bool hasTool;         
+    public string toolTag;           
+    public int missionTarget;     
     
     private SubGoal missionSubGoal;
     private int missionProgress;
@@ -31,60 +31,41 @@ public class NPC : GAgent
         //NewAsignJob();
         base.Start();
     }
-    /// <summary>
-    /// Asigna una misión de recolectar:
-    /// - resourceTag: Tag de los objetos en escena ("Tree", "Ore"...)
-    /// - resourceType: enum WOOD, STONE, etc. (para FarmResources y TownHall)
-    /// - targetAmount: cuántas unidades quieres (0 = infinito)
-    /// </summary>
     public void AssignGatherMission()
     {
-        // 1) Limpiar viejas misiones
         goals.Clear();
         
 
-        // 2) Generar el SubGoal
         string goalKey = missionResourceType.ToString();
         missionSubGoal = new SubGoal(goalKey, 1, false);
         goals.Add(missionSubGoal, 1);
 
-        // 3) ELIMINAR acciones viejas de este tipo (por si re‐asignas misión)
         actions.RemoveAll(a => a is GetItem || a is FarmingResources);
 
-        // 4) Si necesita herramienta, la pico primero
         if (needTool)
         {
             var gi = gameObject.AddComponent<GetItem>();
             gi.itemTag = toolTag;
            // gi.duration = Random.Range(0.5f, 1.3f);
-            // Muy importante: añadir a la lista de acciones
             actions.Add(gi);
         }
 
-        // 5) Acción de farmear recurso
         var fr = gameObject.AddComponent<FarmingResources>();
         fr.resourceTag = missionResourceTag;
         fr.resourceType = missionResourceType;
-       // fr.duration = Random.Range(1, 3); // Setear Duracion de talar 
-        // Si necesita herramienta, pone precondición HasTool
+       // fr.duration = Random.Range(1, 3); 
         if (needTool)
             fr.preconditions.Add("Has" + toolTag, 1);
-        // Añádela también a la lista
         actions.Add(fr);
     }
 
 
-    /// <summary>
-    /// Llamado desde FarmingResources.PostPerform()
-    /// para contar cuántas unidades llevamos y parar si es necesario.
-    /// </summary>
     public void OnResourceGathered(TownResourcesTypes resourceType , int amountAdded)
     {
         if (resourceType != missionResourceType) return;
         missionProgress+=amountAdded;
         Debug.Log($"{name}: recolectadas {missionProgress}/{(missionTarget == 0 ? "∞" : missionTarget.ToString())} de {resourceType}");
 
-        // Si hay un objetivo finito y lo alcanzamos, cancelamos
         if (missionTarget > 0 && missionProgress >= missionTarget)
         {
             goals.Remove(missionSubGoal);
@@ -127,12 +108,8 @@ public class NPC : GAgent
         return null;
     }
 
-    /// <summary>
-    /// Asigna misión de fabricar
-    /// </summary>
     public void AssignCraftMission(string recipeID, int targetAmount)
     {
-        // Limpiar
        // goals.Clear();
         actions.RemoveAll(a => a is GAction);
 
@@ -140,22 +117,16 @@ public class NPC : GAgent
         missionProgress = 0;
         missionTarget = targetAmount;
 
-        // SubGoal: clave = recipeID+"Crafted"
         missionSubGoal = new SubGoal(recipeID + "Crafted", 1, false);
         goals.Add(missionSubGoal, 1);
 
-        // Acción dinámica
         var craft = gameObject.AddComponent<CraftItem>();
         craft.recipeID = recipeID;
         actions.Add(craft);
 
-        // Forzar replan
         ResetPlan();
     }
 
-    /// <summary>
-    /// Llamado por CraftItem.PostPerform()
-    /// </summary>
     public void OnItemCrafted(string recipeID)
     {
         if (recipeID + "Crafted" != missionSubGoal.sGoals.Keys.First()) return;
@@ -177,18 +148,16 @@ public class NPC : GAgent
         if (currentAction == null && !wasPlanning && actions.Count<1)
         {
            // ResetPlan();
-            // Añadir la acción de deambular si no hay plan
             Debug.Log($"{gameObject.name} no tiene plan, añadiendo Wander...");
             Wander wander = gameObject.AddComponent<Wander>();
            // wander.duration = Random.Range(3f, 6f); 
            
 
-            // Crear subobjetivo temporal
             SubGoal wanderGoal = new SubGoal("wander", 1, false);
             goals.Add(wanderGoal,1);
             actions.Add(wander);
 
-            wasPlanning = true; // para evitar que lo añada múltiples veces
+            wasPlanning = true; 
         }
         else if (currentAction != null)
         {
@@ -270,35 +239,30 @@ public class NPC : GAgent
 
     void AddLumberjackTasks()
     {
-        // Agregar tareas de cortar árboles
         SubGoal chopWoodGoal = new SubGoal("choppedTree", 1, true);
-        goals.Add(chopWoodGoal, 1);  // Asignamos la meta con prioridad
+        goals.Add(chopWoodGoal, 1); 
     }
 
     void AddMinerTasks()
     {
-        // Agregar tareas de minar
         SubGoal mineGoal = new SubGoal("Mine", 1, false);
-        goals.Add(mineGoal, 1);  // Asignamos la meta con prioridad
+        goals.Add(mineGoal, 1); 
     }
 
     void AddFarmerTasks()
     {
-        // Agregar tareas de sembrar y cosechar
         SubGoal farmGoal = new SubGoal("Farm", 1, false);
        goals.Add(farmGoal, 1);
     }
 
     void AddBuilderTasks()
     {
-        // Agregar tareas de construcción
         SubGoal buildGoal = new SubGoal("Build", 1, false);
         goals.Add(buildGoal, 1);
     }
 
     void AddHealerTasks()
     {
-        // Agregar tareas de curación
         SubGoal healGoal = new SubGoal("Heal", 1, false);
         goals.Add(healGoal, 1);
     }
