@@ -26,5 +26,5 @@ MonoBehaviour:
     A\xFAn no has abandonado su vida de le\xF1ador, pero guardas la ambici\xF3n de
     forjar un legado que no se hunda como la le\xF1a bajo la lluvia."
   maxHistory: 20
-  modelName: llama2
+  modelName: llama2:7b
   maxResponseLength: 200
