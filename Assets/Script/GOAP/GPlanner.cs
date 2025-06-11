@@ -52,7 +52,6 @@ public class GPlanner
         Queue<GAction> queue = new Queue<GAction>();
         foreach (GAction a in result)
         {
-            Debug.Log("Q : " + a.actionName);
             queue.Enqueue(a);
         }
         return queue;
@@ -83,7 +82,6 @@ public class GPlanner
             // Si el nuevo estado cumple la meta, agregar a leaves
             if (GoalAchieved(goal, newState))
             {
-                Debug.Log("[Planner] Leaf created with state: " + string.Join(", ", newState.Select(kv => kv.Key + "=" + kv.Value)));
                 leaves.Add(node);
                 foundPath = true;
             }
@@ -105,12 +103,10 @@ public class GPlanner
         {
             if (!state.ContainsKey(g.Key) || state[g.Key] < g.Value)
             {
-                Debug.LogWarning($"[Planner] Goal NOT achieved: {g.Key}>={g.Value} — current = {(state.ContainsKey(g.Key) ? state[g.Key].ToString() : "null")}");
                 return false;
             }
                 
         }
-        Debug.LogError("[Planner] GOAL ACHIEVED: " + string.Join(", ", goal.Select(kv => kv.Key + ">=" + kv.Value)));
         return true;
     }
 }

@@ -13,6 +13,10 @@ TagManager:
   - Ore
   - Stone
   - FoodStore
+  - Animal
+  - Weapon
+  - Shield
+  - Cemento
   layers:
   - Default
   - TransparentFX

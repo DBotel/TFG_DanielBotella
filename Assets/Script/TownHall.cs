@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class TownHall : MonoBehaviour
@@ -12,21 +15,60 @@ public class TownHall : MonoBehaviour
     private int unemployedRate;
 
     private WorldStates world;
+    public List<GAgent> agents;
+    public List<Transform> patrolPoints;
+
+    public List<GameObject> houses;
     public void SetStates()
     {
         world.SetState("town_resources_Wood", town_resources.TownResources_All[TownResourcesTypes.WOOD]);
         world.SetState("town_resources_Stone", town_resources.TownResources_All[TownResourcesTypes.STONE]);
-        world.SetState("food", food);
-        world.SetState("money", townMoney);
+        world.SetState("food", town_resources.TownResources_All[TownResourcesTypes.FOOD]);
+        world.SetState("money", town_resources.TownResources_All[TownResourcesTypes.MONEY]);
         world.SetState("unemployedRate", unemployedRate);
     }
     public void UpdateStates()
     {
         world.ModifyState("town_resources_Stone", town_resources.TownResources_All[TownResourcesTypes.STONE]);
-        world.ModifyState("food", food);
-        world.ModifyState("money", food);
+        world.ModifyState("food", town_resources.TownResources_All[TownResourcesTypes.FOOD]);
+        world.ModifyState("money", town_resources.TownResources_All[TownResourcesTypes.MONEY]);
         world.ModifyState("unemployedRate", unemployedRate);
         world.ModifyState("town_resources_Wood", town_resources.TownResources_All[TownResourcesTypes.WOOD]);
+    }
+
+
+    private void Start()
+    {
+        InvokeRepeating(nameof(UpdateStates), 0f, 10f);
+    }
+
+    public void SetNPCS()
+    {
+        agents = new List<GAgent>();
+        foreach (var agent in FindObjectsOfType<GAgent>())
+        {
+            if (agent.town == this)
+            {
+                agents.Add(agent);
+            }
+            else // esto es provisinal porque solo van a tener una ciudad
+            {
+                agents.Add(agent);
+                agent.town = this;
+            }
+        }
+    }
+
+    public void AddNPC(GAgent npc)
+    {
+        
+        agents.Add(npc);
+        npc.town = this;
+    }
+
+    public List<GAgent> GetNPC()
+    {
+        return agents;
     }
     private void Awake()    
     {
@@ -43,7 +85,7 @@ public class TownHall : MonoBehaviour
         CallRefreshUI();
         
         world = GWorld.Instance.GetWorld();
-
+        SetNPCS();
     }
     public bool CanAfford(TownResourcesTypes firstType, int firstAmount, TownResourcesTypes secondType, int secondAmount, bool two)
     {

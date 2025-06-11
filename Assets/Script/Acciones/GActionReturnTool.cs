@@ -11,7 +11,6 @@ public class GActionReturnTool : GAction
 
     public override void SetupAction()
     {
-        Debug.Log($"SetupAction ReturnTool: toolTag={toolTag}, preconditions={preconditions.Count}, effects={effects.Count}");
         preconditions.Clear();
         effects.Clear();
         string haveKey = "hasTool_" + toolTag;
@@ -53,10 +52,12 @@ public class GActionReturnTool : GAction
             G_Agent.beliefs.ModifyState("returnedTool_" + toolTag, 1);
             G_Agent.beliefs.SetState("returnedTool_" + toolTag, 1);
             Debug.Log($"[ReturnTool] Devolved {toolTag}");
-            
             Debug.LogError("[ReturnTool] Devuelta " + toolTag + ": hasTool_" + toolTag +
                       " = " + G_Agent.beliefs.GetState("hasTool_" + toolTag) +
                       ", returnedTool_" + toolTag + " = " + G_Agent.beliefs.GetState("returnedTool_" + toolTag));
+            //GetComponent<NPCRoleAssigner>().ChangeRole();
+            G_Agent.ResetPlan();
+
         }
         if (target != null) Destroy(target);
         target = null;

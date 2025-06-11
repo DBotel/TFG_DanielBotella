@@ -16,7 +16,6 @@ public class GActionTakeTool : GAction
 
     public override void SetupAction()
     {
-        Debug.Log($"SetupAction TakeTool: toolTag={toolTag}, preconditions={preconditions.Count}, effects={effects.Count}");
         preconditions.Clear();
         effects.Clear();
 
@@ -26,12 +25,10 @@ public class GActionTakeTool : GAction
         effects[haveKey] = 1;
 
         targetTag = toolTag;
-        Debug.Log($"SetupAction TakeTool: targetTag={targetTag}");
     }
 
     public override bool PrePerform()
     {
-        Debug.Log("PrePerform TakeTool");
 
         if (G_Agent.inventory.HasTool(toolTag))
             return false;

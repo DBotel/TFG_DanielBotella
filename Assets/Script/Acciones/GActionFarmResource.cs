@@ -8,7 +8,7 @@ public class GActionFarmResource : GAction
     public string resourceTag;
     public TownResourcesTypes resourceType;
     public int amountNeeded = 5;
-
+    private string tool;
     public override void SetupAction()
     {
         if(resourceTag=="")return;
@@ -16,7 +16,23 @@ public class GActionFarmResource : GAction
         preconditions.Clear();
         effects.Clear();
 
-        string toolKey = "hasTool_" + (resourceType == TownResourcesTypes.WOOD ? "Axe" : "Pickaxe");
+        switch (resourceType)
+        {
+            case TownResourcesTypes.WOOD:
+                tool = "Axe";
+                break;
+            case TownResourcesTypes.STONE:
+                tool = "Pickaxe";
+                break;
+            case TownResourcesTypes.FOOD:
+                tool = "Weapon";
+                break;
+            default:
+                Debug.LogError("Unknown resource type: " + resourceType);
+                return;
+        }
+  
+        string toolKey = "hasTool_" + tool;
         preconditions[toolKey] = 1;
 
         string collectKey = "collected_" + resourceType;

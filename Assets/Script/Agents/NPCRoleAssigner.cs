@@ -1,5 +1,14 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-public enum NPCRole { Lumberjack, Miner }
+public enum NPCRole
+{
+    Hunter,
+    Builder,
+    Guard,
+    Miner,        
+    Lumberjack,   
+}
 
 [RequireComponent(typeof(GAgent))]
 public class NPCRoleAssigner : MonoBehaviour
@@ -13,18 +22,30 @@ public class NPCRoleAssigner : MonoBehaviour
     private GAgent agent;
     private LumberjackAgent lumberjackAgent;
     private StoneMiner miner;
-
+    private HunterAgent hunterAgent;
+    private GuardAgent guardAgent;
+    
+    [SerializeField] private TownHall townHall;
     void Awake()
     {
         agent = GetComponent<GAgent>();
         lumberjackAgent = GetComponent<LumberjackAgent>();
         miner = GetComponent<StoneMiner>();
+        hunterAgent = GetComponent<HunterAgent>();
+        guardAgent = GetComponent<GuardAgent>();
         // minerAgent = GetComponent<MinerAgent>();
     }
 
     void Start()
     {
         //ApplyRole();
+    }
+    
+    public void SetupRole(NPCRole newRole, int amount = 5)
+    {
+        role = newRole;
+        desiredAmount = amount;
+        ChangeRole();
     }
     [ContextMenu("ChangeRole")]
     public void ChangeRole()
@@ -49,7 +70,6 @@ public class NPCRoleAssigner : MonoBehaviour
         switch (role)
         {
             case NPCRole.Lumberjack:
-                Debug.LogError("Lumberjack");
                 agent.beliefs.states["hasTool_Axe"] = 0;
                 agent.beliefs.states["collected_WOOD"] = 0;
                 agent.beliefs.states["returnedTool_Axe"] = 0;
@@ -60,7 +80,6 @@ public class NPCRoleAssigner : MonoBehaviour
                 break;
 
             case NPCRole.Miner:
-                Debug.LogError("Miner");
                 agent.beliefs.states["hasTool_Pickaxe"] = 0;
                 agent.beliefs.states["collected_STONE"] = 0;
                 agent.beliefs.states["returnedTool_Pickaxe"] = 0;
@@ -69,6 +88,28 @@ public class NPCRoleAssigner : MonoBehaviour
                 var takeM = GetComponent<GActionTakeTool>();
                 takeM.collectStateKey = "collected_STONE";
                 break;
+            
+            case NPCRole.Hunter:
+                agent.beliefs.states["hasTool_Weapon"] = 0;
+                agent.beliefs.states["collected_MEAT"] = 0;
+                agent.beliefs.states["returnedTool_Weapon"] = 0;
+                
+                hunterAgent.ConfigureHunter(desiredAmount);
+                var takeH = GetComponent<GActionTakeTool>();
+                takeH.collectStateKey = "collected_MEAT";
+                break;
+            case NPCRole.Guard:
+                agent.beliefs.states["hasTool_Shield"] = 0;
+                agent.beliefs.states["defend"] = 0;
+                agent.beliefs.states["returnedTool_Shield"] = 0;
+                
+                guardAgent.ConfigureGuard();
+                var takeS = GetComponent<GActionTakeTool>();
+                takeS.collectStateKey = "collected_DEFEND";
+                break;
+                
         }
     }
+    
+    
 }

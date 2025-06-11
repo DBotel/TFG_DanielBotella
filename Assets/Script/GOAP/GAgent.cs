@@ -98,9 +98,8 @@ public class GAgent : MonoBehaviour
                 foreach (var req in g.Key.sGoals)
                     combinedGoals[req.Key] = req.Value;
 
-            LogAgentState();
-            Debug.Log("[Planner] Planificando para metas: " +
-          string.Join(", ", combinedGoals.Select(kv => kv.Key + ">=" + kv.Value)));
+           // LogAgentState();
+    
 
             planner = new GPlanner();
             actionQueue = planner.plan(this, actions, combinedGoals);

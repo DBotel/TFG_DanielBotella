@@ -8,6 +8,7 @@ public enum TownResourcesTypes
     NULL,
     WOOD,
     STONE,
+    FOOD,
     MONEY
 }
 public class Town_Resources 
@@ -16,6 +17,8 @@ public class Town_Resources
     public int Wood { get; private set; }
     public int Stone { get; private set; }
     public int Money { get; private set; }
+    
+    public int Food { get; private set; }
 
     private int nextId;
 
@@ -30,6 +33,7 @@ public class Town_Resources
         TownResources_All[TownResourcesTypes.WOOD] = 0;
         TownResources_All[TownResourcesTypes.STONE] = 0;
         TownResources_All[TownResourcesTypes.MONEY] = 0;
+        TownResources_All[TownResourcesTypes.FOOD] = 0;
     }
     public Town_Resources()
     {
@@ -73,6 +77,7 @@ public class Town_Resources
             case TownResourcesTypes.WOOD: Wood = amount; break;
             case TownResourcesTypes.STONE: Stone = amount; break;
             case TownResourcesTypes.MONEY: Money = amount; break;
+            case TownResourcesTypes.FOOD: Food = amount; break;
         }
         TownHall.CallRefreshUI();
     }

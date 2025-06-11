@@ -18,7 +18,6 @@ public class GoalDebugLog : MonoBehaviour
             return;
         }
 
-        Debug.Log("[GoalDebugLog] Metas actuales:");
         foreach (var goal in agent.goals)
         {
             foreach (var kv in goal.Key.sGoals)

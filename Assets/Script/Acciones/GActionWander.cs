@@ -15,19 +15,27 @@ public class GActionWander : GAction
 
     public override bool PrePerform()
     {
-        Debug.LogError("WANDER PREPERFORM");
         Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
         randomDirection += transform.position;
         NavMeshHit navHit;
         NavMesh.SamplePosition(randomDirection, out navHit, wanderRadius, -1);
-        target = new GameObject("WanderTarget");
-        target.transform.position = navHit.position;
-        return true;
+        if(navHit.position == Vector3.positiveInfinity || navHit.position == Vector3.negativeInfinity)
+        {
+            target = new GameObject("WanderTarget");
+            target.transform.position=agent.transform.position;
+            return true;
+        }
+        else
+        {
+            target = new GameObject("WanderTarget");
+            target.transform.position = navHit.position;
+            return true;
+        }
+        
     }
 
     public override bool PostPerform()
     {
-        Debug.LogError("WANDER POSTPERFORM");
 
         if (target != null) Destroy(target);
         return true;
