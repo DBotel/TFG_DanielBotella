@@ -5,12 +5,14 @@ public class GActionWander : GAction
 {
     public float wanderRadius = 10f;
 
+    public int n;
     public override void SetupAction()
     {
         preconditions.Clear();
         effects.Clear();
 
         effects["isWandering"] = 1;
+        
     }
 
     public override bool PrePerform()

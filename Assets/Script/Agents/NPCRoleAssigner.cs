@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections;
 public enum NPCRole
 {
     Hunter,
@@ -36,12 +37,22 @@ public class NPCRoleAssigner : MonoBehaviour
         // minerAgent = GetComponent<MinerAgent>();
     }
 
+    
     void Start()
     {
-        //ApplyRole();
+        return;
+        IEnumerator Wait()
+        {
+            yield return new WaitForSeconds(2f);
+            GActionWander wanderAction = GetComponent<GActionWander>();
+            wanderAction.PostPerform();
+            ChangeRole();
+
+        }
+        StartCoroutine(Wait());
     }
     
-    public void SetupRole(NPCRole newRole, int amount = 5)
+    public void SetupRole(NPCRole newRole, int amount )
     {
         role = newRole;
         desiredAmount = amount;

@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq; 
+using System.Linq;
+using TMPro;
+using UnityEngine.UI;
 
 public class NPCRoleManager : MonoBehaviour
 {
     public TownHall townHall;
-    List<NPCBasicNeeds> basicNeeds;
+    List<NPCBasicNeeds> allNPCSNeeds;
 
+    
+    public TextMeshProUGUI statsText;
     private void Awake()
     {
-        basicNeeds = new List<NPCBasicNeeds>();
+        allNPCSNeeds = new List<NPCBasicNeeds>();
         if (townHall == null)
         {
             townHall = GetComponent<TownHall>();
@@ -21,7 +25,12 @@ public class NPCRoleManager : MonoBehaviour
         }
     }
 
-    void ReassignRoles()
+    private void Start()
+    {
+        UpdateTextStats();
+    }
+
+    public void ReassignRoles()
     {
             var world           = GWorld.Instance.GetWorld();
             int food             = world.GetState("food");
@@ -31,15 +40,15 @@ public class NPCRoleManager : MonoBehaviour
 
             List<GAgent> agents = townHall.GetNPC();
             int N = agents.Count;
-            basicNeeds.Clear();
+            allNPCSNeeds.Clear();
             foreach (var a in agents)
                 if (a.TryGetComponent(out NPCBasicNeeds n))
-                    basicNeeds.Add(n);
+                    allNPCSNeeds.Add(n);
             if (N == 0) return;
 
-            float hungerTotal = basicNeeds.Sum(n => n.hunger);
-            float sleepTotal  = basicNeeds.Sum(n => n.sleep);
-            float happyTotal  = basicNeeds.Sum(n => n.happiness);
+            float hungerTotal = allNPCSNeeds.Sum(n => n.hunger);
+            float sleepTotal  = allNPCSNeeds.Sum(n => n.sleep);
+            float happyTotal  = allNPCSNeeds.Sum(n => n.happiness);
 
             float maxStat       = 100f * N;
             float uHunger       = 1f - (hungerTotal / maxStat);        // Hunter
@@ -87,7 +96,25 @@ public class NPCRoleManager : MonoBehaviour
                 shuffled[idx].GetComponent<NPCRoleAssigner>()?.SetupRole(NPCRole.Guard, 1);
 
             Debug.Log($"Roles → Hunter:{tHunter} Builder:{tBuilder} Lumberjack:{tLumberjack} Miner:{tMiner} Guard:{tGuard}");
+            UpdateTextStats();
         }
+    
+    public void UpdateTextStats()
+    {
+        if (statsText == null) return;
+        
+        var agents = townHall.GetNPC();
+        
+        var roles = System.Enum.GetValues(typeof(NPCRole)).Cast<NPCRole>();
+        string result = "";
+        foreach (var role in roles)
+        {
+            int count = agents.Count(a => a.GetComponent<NPCRoleAssigner>()?.role == role);
+            float percent = (count * 100f) / agents.Count;
+            result += $"- {role}: {percent:0.#}%\n";
+        }
+        statsText.text = result;
+    }
 }
         
         

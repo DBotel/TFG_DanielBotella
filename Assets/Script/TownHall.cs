@@ -86,6 +86,8 @@ public class TownHall : MonoBehaviour
         
         world = GWorld.Instance.GetWorld();
         SetNPCS();
+        
+        SetStates();
     }
     public bool CanAfford(TownResourcesTypes firstType, int firstAmount, TownResourcesTypes secondType, int secondAmount, bool two)
     {

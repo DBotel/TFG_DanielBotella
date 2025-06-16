@@ -32,7 +32,6 @@ public class GPlanner
         bool success = BuildGraph(start, leaves, usableActions, goal);
         if (!success)
         {
-            Debug.Log("NO HAY PLAN");
             return null;
         }
 

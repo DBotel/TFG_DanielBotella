@@ -86,7 +86,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   hall: {fileID: 0}
-  value: 10
+  value: 1
+  spawner: {fileID: 0}
   hasDestroyFX: 0
 --- !u!195 &6332224356286343502
 NavMeshAgent:

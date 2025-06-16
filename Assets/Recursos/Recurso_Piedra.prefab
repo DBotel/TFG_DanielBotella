@@ -102,7 +102,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 2
   hall: {fileID: 0}
-  value: 10
+  value: 1
+  spawner: {fileID: 0}
   hasDestroyFX: 0
 --- !u!1001 &151967333927956899
 PrefabInstance:

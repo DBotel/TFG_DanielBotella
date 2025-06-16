@@ -102,4 +102,5 @@ MonoBehaviour:
   type: 1
   hall: {fileID: 0}
   value: 1
+  spawner: {fileID: 0}
   hasDestroyFX: 0

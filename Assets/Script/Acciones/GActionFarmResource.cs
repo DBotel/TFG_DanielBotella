@@ -12,7 +12,6 @@ public class GActionFarmResource : GAction
     public override void SetupAction()
     {
         if(resourceTag=="")return;
-        Debug.Log($"SetupAction FarmResource: resourceTag={resourceTag}, preconditions={preconditions.Count}, effects={effects.Count}");
         preconditions.Clear();
         effects.Clear();
 
@@ -43,7 +42,10 @@ public class GActionFarmResource : GAction
             var ex = nodes[0].GetComponent<FarmResources>();
             if (ex != null) val = ex.value;
         }
-        effects[collectKey] = val;
+        NPCRoleAssigner npcRoleAssigner = GetComponent<NPCRoleAssigner>();
+        
+        //effects[collectKey] = val;
+        effects[collectKey] = npcRoleAssigner.desiredAmount;
     }
 
     public override bool PrePerform()

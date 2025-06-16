@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine.AI;
 using UnityEngine;
+using TMPro;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class GActionTakeTool : GAction
@@ -14,6 +15,8 @@ public class GActionTakeTool : GAction
     private Vector3 originalPosition;
     private Transform originalParent;
 
+    
+    public GameObject noToolMessage;
     public override void SetupAction()
     {
         preconditions.Clear();
@@ -42,7 +45,16 @@ public class GActionTakeTool : GAction
         }
 
         var tools = GameObject.FindGameObjectsWithTag(toolTag);
-        if (tools.Length == 0) return false;
+        if (tools.Length == 0)             return false; 
+/*
+        {
+            
+            var go = Instantiate(noToolMessage, G_Agent.transform.position + Vector3.up * 2, Quaternion.identity);
+            go.GetComponent<Canvas>().worldCamera = Camera.main;
+            go.GetComponentInChildren<TextMeshPro>().text = "NO HAY HERRAMIENTAS DISPONIBLES";
+            Destroy(go, 2f); // Destruye el texto tras 2 segundos
+            
+        }*/ 
         var closest = tools.OrderBy(t => Vector3.Distance(t.transform.position, transform.position)).First();
 
         target = closest;
