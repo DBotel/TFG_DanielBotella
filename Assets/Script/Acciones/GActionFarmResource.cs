@@ -63,6 +63,8 @@ public class GActionFarmResource : GAction
         var farm = target.GetComponent<FarmResources>();
         if (farm != null)
         {
+            NPCBasicNeeds npcNeeds = GetComponent<NPCBasicNeeds>();
+            npcNeeds.money += 20f;
             farm.FarmResource();
             G_Agent.beliefs.ModifyState("collected_" + resourceType, farm.value);
             GWorld.Instance.GetWorld().ModifyState(resourceType.ToString(), farm.value);

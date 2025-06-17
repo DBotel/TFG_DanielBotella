@@ -35,6 +35,8 @@ public class NPCRoleAssigner : MonoBehaviour
         hunterAgent = GetComponent<HunterAgent>();
         guardAgent = GetComponent<GuardAgent>();
         // minerAgent = GetComponent<MinerAgent>();
+        
+        townHall = FindObjectOfType<TownHall>();
     }
 
     
@@ -111,7 +113,7 @@ public class NPCRoleAssigner : MonoBehaviour
                 break;
             case NPCRole.Guard:
                 agent.beliefs.states["hasTool_Shield"] = 0;
-                agent.beliefs.states["defend"] = 0;
+                agent.beliefs.states["collected_DEFEND"] = 0;
                 agent.beliefs.states["returnedTool_Shield"] = 0;
                 
                 guardAgent.ConfigureGuard();

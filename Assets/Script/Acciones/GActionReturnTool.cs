@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class GActionReturnTool : GAction
@@ -57,7 +58,14 @@ public class GActionReturnTool : GAction
                       ", returnedTool_" + toolTag + " = " + G_Agent.beliefs.GetState("returnedTool_" + toolTag));
             //GetComponent<NPCRoleAssigner>().ChangeRole();
             G_Agent.ResetPlan();
+            StartCoroutine(UnEmployedWait());
 
+        }
+        
+        IEnumerator UnEmployedWait()
+        {
+            yield return new WaitForSeconds(Random.Range(3,8));
+            GetComponent<NPCRoleAssigner>().ChangeRole();
         }
         if (target != null) Destroy(target);
         target = null;

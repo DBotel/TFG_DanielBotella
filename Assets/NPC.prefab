@@ -32,6 +32,7 @@ GameObject:
   - component: {fileID: 2914992448231801297}
   - component: {fileID: 502513490554241820}
   - component: {fileID: 2898043430810776922}
+  - component: {fileID: 1286396839273475997}
   m_Layer: 3
   m_Name: NPC
   m_TagString: Untagged
@@ -141,7 +142,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5000001
-  m_Speed: 5
+  m_Speed: 25
   m_Acceleration: 9999
   avoidancePriority: 50
   m_AngularSpeed: 0
@@ -361,6 +362,7 @@ MonoBehaviour:
   G_Agent: {fileID: 0}
   runing: 0
   wanderRadius: 10
+  n: 0
 --- !u!114 &2957317770891864863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -501,6 +503,22 @@ MonoBehaviour:
   G_Agent: {fileID: 0}
   runing: 0
   patrolPoints: []
+--- !u!114 &1286396839273475997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7183063517124341835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02d3e8bc7d8fc43429cbdb3be19f311c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  checkInterval: 1
+  movementThreshold: 0.2
+  stuckTime: 3
+  unstuckRadius: 2
 --- !u!1001 &1433988712502549448
 PrefabInstance:
   m_ObjectHideFlags: 0
