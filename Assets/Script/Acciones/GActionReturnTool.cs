@@ -47,6 +47,7 @@ public class GActionReturnTool : GAction
             G_Agent.inventory.RemoveItem(tool);
             tool.SetActive(true);
             var data = tool.GetComponent<ToolData>();
+            tool.GetComponent<Tool>().isTaken = false;
             tool.transform.position = data.originalPosition;
             tool.transform.parent = data.originalParent;
             G_Agent.beliefs.ModifyState("hasTool_" + toolTag, -1);

@@ -27,7 +27,7 @@ public class DialogueUIManager : MonoBehaviour
 
     public void ShowDialogue(NPCRoleAssigner assigner)
     {
-        DialogueManager.Instance.StartDialogue(assigner.profile);
+        DialogueManager.Instance.StartDialogue(assigner.profile,assigner.role);
         
         playerInput.text    = "";
         npcResponseText.text = "";

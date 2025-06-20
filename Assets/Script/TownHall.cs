@@ -18,7 +18,7 @@ public class TownHall : MonoBehaviour
     public List<GAgent> agents;
     public List<Transform> patrolPoints;
 
-    public List<GameObject> houses;
+    public List<GameObject> buildings;
     public void SetStates()
     {
         world.SetState("town_resources_Wood", town_resources.TownResources_All[TownResourcesTypes.WOOD]);
@@ -76,7 +76,7 @@ public class TownHall : MonoBehaviour
         town_resources.TownHall = this;
 
         town_resources.SetResourceAmount(TownResourcesTypes.WOOD, 100);
-        town_resources.SetResourceAmount(TownResourcesTypes.STONE, 50);
+        town_resources.SetResourceAmount(TownResourcesTypes.STONE, 80);
         town_resources.SetResourceAmount(TownResourcesTypes.MONEY, 200);
 
         Debug.Log("TownHall: recursos inicializados");

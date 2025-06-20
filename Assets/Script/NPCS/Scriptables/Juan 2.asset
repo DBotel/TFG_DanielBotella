@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ac255a1da097ce4eb816326fdb1cb1e, type: 3}
-  m_Name: Juan
+  m_Name: Juan 2
   m_EditorClassIdentifier: 
   npcId: lignarius_el_ambicioso
   backstory: "Arnulf \u201CLignarius\u201D has pasado los \xFAltimos quince a\xF1os

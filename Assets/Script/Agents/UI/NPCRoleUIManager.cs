@@ -118,8 +118,9 @@ public class NPCRoleUIManager : MonoBehaviour
 
     void ConfigureAndResetAgent()
     {
+        /*
         foreach (var action in selectedAssigner.GetComponents<GAction>())
-            action.SetupAction();
+            action.SetupAction();*/
        selectedAssigner.ApplyRole();
        
         HidePanel();

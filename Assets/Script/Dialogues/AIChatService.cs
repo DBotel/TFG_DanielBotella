@@ -22,9 +22,10 @@ public class AIChatService : MonoBehaviour
     
     async void Start()
     {
+        
         var warmNpc = new NPCData {
             backstory = "Warmup",
-            modelName = "llama2:7b",
+            modelName = "llama2",
             history   = new List<ChatMessage>()
         };
 
@@ -34,32 +35,28 @@ public class AIChatService : MonoBehaviour
     public async Task<string> SendInitialResponseAsync(NPCData npc)
     {
         TrimHistory(npc);
-        
+        var systemContent = 
+            $"Eres un NPC de un videojuego ambientado en la Edad Media. " +
+            $"Tu rol actual es: {npc.currentRole}. " +
+            "Sólo hablas en español, con vocabulario medieval, " +
+            "y tus respuestas no superan 150 caracteres.";
+
         var msgList = new List<MessageData>
         {
             new MessageData {
-                role = "system",
-                content =
-                    "Estás en un videojuego ambientado en la Edad Media de habla hispana. " +
-                    npc.backstory +
-                    "Sólo hablas en español, con vocabulario y tono medieval, " +
-                    $"y tus respuestas no exceden {npc.maxResponseLength} caracteres."
+                role    = "system",
+                content = systemContent
             }
         };
-        
-        msgList.Add(new MessageData {
-            role = "system",
-            content = $"Porfavor , limita mucho tu respuesta , debe de ser un saludo , 100 caracteres máximo."
-        });
+
+        // 2) Volcamos el historial anterior…
         foreach (var h in npc.history)
             msgList.Add(new MessageData { role = h.role, content = h.content });
-
 
         var request = new ChatCompletionRequest
         {
             model    = npc.modelName,
-            messages = msgList,
-            stream   = true
+            messages = msgList
         };
         string jsonPayload = JsonUtility.ToJson(request);
         Debug.Log($"[IA] Enviando saludo inicial: {jsonPayload}");
@@ -94,26 +91,31 @@ public class AIChatService : MonoBehaviour
       public async Task<string> SendChatCompletionAsync(NPCData npc, string playerInput)
     {
         TrimHistory(npc);
+        var systemContent = 
+            $"Eres un NPC de un videojuego ambientado en la Edad Media. " +
+            $"Tu rol actual es: {npc.currentRole}. " +
+            "Sólo hablas en español, con vocabulario medieval, " +
+            "y tus respuestas no superan 150 caracteres.";
 
         var msgList = new List<MessageData>
         {
             new MessageData {
-                role = "system",
-                content =
-                    "Estás en un videojuego ambientado en la Edad Media de habla hispana. " +
-                    npc.backstory  +
-                    "Sólo hablas en español, con vocabulario y tono medieval, " +
-                    $"y tus respuestas no exceden {npc.maxResponseLength} caracteres."
+                role    = "system",
+                content = systemContent
             }
         };
+
+        // 2) Volcamos el historial anterior…
         foreach (var h in npc.history)
             msgList.Add(new MessageData { role = h.role, content = h.content });
+
+        // 3) Añadimos el mensaje del usuario
         msgList.Add(new MessageData { role = "user", content = playerInput });
-        
+
         var request = new ChatCompletionRequest
         {
             model    = npc.modelName,
-            messages = msgList,
+            messages = msgList
         };
         string jsonPayload = JsonUtility.ToJson(request);
         Debug.LogError($"[IA] Enviando payload: {jsonPayload}");

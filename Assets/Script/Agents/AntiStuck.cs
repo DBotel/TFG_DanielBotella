@@ -12,17 +12,21 @@ public class AntiStuck : MonoBehaviour
     private Vector3 lastPosition;
     private float checkTimer;
     private float stuckTimer;
-
+    private GActionBuild actionBuild;
+    private NPCRoleAssigner roleAssigner;
     void Start()
     {
+        actionBuild = GetComponent<GActionBuild>();
         agent        = GetComponent<NavMeshAgent>();
         lastPosition = transform.position;
         checkTimer   = 0f;
         stuckTimer   = 0f;
+        roleAssigner = GetComponent<NPCRoleAssigner>();
     }
 
     void Update()
     {
+        if(actionBuild.nowBuilding)return;
         checkTimer += Time.deltaTime;
         if (checkTimer < checkInterval) return;
 
@@ -53,13 +57,12 @@ public class AntiStuck : MonoBehaviour
         if (NavMesh.SamplePosition(randomDir, out NavMeshHit hit, unstuckRadius, NavMesh.AllAreas))
         {
             agent.SetDestination(hit.position);
-            Debug.Log($"[AntiStuck] Desatascando NPC moviéndose a {hit.position}");
+            roleAssigner.ChangeRole();
         }
         else
         {
             Vector3 brute = transform.position + Random.insideUnitSphere * (unstuckRadius * 0.5f);
             agent.Warp(brute);
-            Debug.LogWarning($"[AntiStuck] No encontró NavMesh, warpeando NPC a {brute}");
         }
     }
 }

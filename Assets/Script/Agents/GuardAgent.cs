@@ -28,8 +28,6 @@ public class GuardAgent : MonoBehaviour
 
         //ret.toolTag = "Shield";
         
-        foreach (var a in GetComponents<GAction>())
-            a.SetupAction();
 
         //agent.beliefs.SetState("hasTool_Shield", 0);
         agent.beliefs.SetState("defend",         0);

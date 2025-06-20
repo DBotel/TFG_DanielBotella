@@ -45,18 +45,12 @@ public class GActionTakeTool : GAction
         }
 
         var tools = GameObject.FindGameObjectsWithTag(toolTag);
+        var avaliableTools = tools
+            .Where(t => !t.GetComponent<Tool>().isTaken)
+            .ToArray();
         if (tools.Length == 0)             return false; 
-/*
-        {
-            
-            var go = Instantiate(noToolMessage, G_Agent.transform.position + Vector3.up * 2, Quaternion.identity);
-            go.GetComponent<Canvas>().worldCamera = Camera.main;
-            go.GetComponentInChildren<TextMeshPro>().text = "NO HAY HERRAMIENTAS DISPONIBLES";
-            Destroy(go, 2f); // Destruye el texto tras 2 segundos
-            
-        }*/ 
         var closest = tools.OrderBy(t => Vector3.Distance(t.transform.position, transform.position)).First();
-
+        closest.GetComponent<Tool>().isTaken = true;
         target = closest;
         originalPosition = closest.transform.position;
         originalParent = closest.transform.parent;

@@ -16,13 +16,14 @@ public class DialogueManager : MonoBehaviour
         else if (Instance != this) Destroy(gameObject);
     }
 
-    public void StartDialogue(NPCProfile profile)
+    public void StartDialogue(NPCProfile profile,NPCRole role)
     {
         currentNpc = new NPCData {
             id        = profile.npcId,
             backstory = profile.backstory,
             maxHistory= profile.maxHistory,
-            modelName = profile.modelName
+            modelName = profile.modelName,
+            currentRole = role
         };
         LoadNpcHistory(currentNpc);
 

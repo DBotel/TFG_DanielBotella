@@ -10,7 +10,9 @@ public class NPCBasicNeeds : MonoBehaviour
     public float happiness = 100f;
 
     GAgent agent;
-
+    
+    const float RATE   = 10f;
+     float nextCheck   = 1f;
     void Awake()
     {
         agent = GetComponent<GAgent>();
@@ -19,7 +21,12 @@ public class NPCBasicNeeds : MonoBehaviour
     void Update()
     {
         SubstractStats();
-        EvaluateNeeds();
+        if(Time.time> nextCheck)
+        {
+            EvaluateNeeds();
+            nextCheck = Time.time + RATE;
+
+        }
     }
 
     void SubstractStats()

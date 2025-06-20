@@ -15,7 +15,6 @@ public class GActionPatrolCity : GAction
 
     public override void SetupAction()
     {
-        Debug.Log("GActionPatrolCity: SetupAction");
         preconditions.Clear();
         effects.Clear();
         // Requiere escudo
@@ -35,7 +34,6 @@ public class GActionPatrolCity : GAction
         agent.GetComponent<NavMeshAgent>()
             .SetDestination(target.transform.position);
         StartCoroutine(WaitToArrive());
-        Debug.Log("GActionPatrolCity: PrePerform - Patrullando a " + target.name);
         return true;
     }
 
@@ -56,7 +54,6 @@ public class GActionPatrolCity : GAction
 
     public override bool PostPerform()
     {
-        Debug.Log("GActionPatrolCity: PostPerform - Llegado a " + target.name);
         // Avanzamos al siguiente punto
         currentPoint = (currentPoint + 1);
         G_Agent.beliefs.ModifyState("defend", 1);

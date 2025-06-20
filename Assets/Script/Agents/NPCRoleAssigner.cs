@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections;
+using UnityEditor;
+
 public enum NPCRole
 {
     Hunter,
@@ -25,6 +27,7 @@ public class NPCRoleAssigner : MonoBehaviour
     private StoneMiner miner;
     private HunterAgent hunterAgent;
     private GuardAgent guardAgent;
+    private BuilderAgent builderAgent;
     
     [SerializeField] private TownHall townHall;
     void Awake()
@@ -34,6 +37,7 @@ public class NPCRoleAssigner : MonoBehaviour
         miner = GetComponent<StoneMiner>();
         hunterAgent = GetComponent<HunterAgent>();
         guardAgent = GetComponent<GuardAgent>();
+        builderAgent = GetComponent<BuilderAgent>();
         // minerAgent = GetComponent<MinerAgent>();
         
         townHall = FindObjectOfType<TownHall>();
@@ -119,6 +123,15 @@ public class NPCRoleAssigner : MonoBehaviour
                 guardAgent.ConfigureGuard();
                 var takeS = GetComponent<GActionTakeTool>();
                 takeS.collectStateKey = "collected_DEFEND";
+                break;
+            
+            case NPCRole.Builder:
+                agent.beliefs.states["hasTool_Cemento"] = 0;
+                agent.beliefs.states["build"] = 0;
+                
+                builderAgent.ConfigureBuilder();
+                var takeC = GetComponent<GActionTakeTool>();
+                takeC.collectStateKey = "build";
                 break;
                 
         }

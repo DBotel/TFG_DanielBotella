@@ -33,6 +33,8 @@ GameObject:
   - component: {fileID: 502513490554241820}
   - component: {fileID: 2898043430810776922}
   - component: {fileID: 1286396839273475997}
+  - component: {fileID: 4727816040278154865}
+  - component: {fileID: 3142500617281796353}
   m_Layer: 3
   m_Name: NPC
   m_TagString: Untagged
@@ -142,7 +144,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5000001
-  m_Speed: 25
+  m_Speed: 15
   m_Acceleration: 9999
   avoidancePriority: 50
   m_AngularSpeed: 0
@@ -275,7 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   role: 0
-  desiredAmount: 60
+  desiredAmount: 1
   profile: {fileID: 11400000, guid: 54a73a605d19a8a449cafed7e7584dc6, type: 2}
   townHall: {fileID: 0}
 --- !u!114 &4352990464826505569
@@ -519,6 +521,42 @@ MonoBehaviour:
   movementThreshold: 0.2
   stuckTime: 3
   unstuckRadius: 2
+--- !u!114 &4727816040278154865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7183063517124341835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9abebd8f688dc7b46add10979b3034bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3142500617281796353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7183063517124341835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f15dcd5942e844448ae2f2d50a93239, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Buildear
+  cost: 1
+  target: {fileID: 0}
+  targetTag: 
+  duration: 0
+  preConditions: []
+  afterEffects: []
+  agent: {fileID: 0}
+  G_Agent: {fileID: 0}
+  runing: 0
+  buildDuration: 5
+  nowBuilding: 0
 --- !u!1001 &1433988712502549448
 PrefabInstance:
   m_ObjectHideFlags: 0

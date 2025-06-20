@@ -52,9 +52,16 @@ public class GActionFarmResource : GAction
     {
         if (resourceTag == "") return false;
         Debug.Log("PrePerform FarmResource");
-        var nodes = GameObject.FindGameObjectsWithTag(resourceTag);
-        if (nodes.Length == 0) return false;
-        target = nodes.OrderBy(n => Vector3.Distance(transform.position, n.transform.position)).First();
+        /*
+        var nodes = GameObject.FindGameObjectsWithTag(resourceTag)
+            .Where(n => !n.GetComponent<FarmResources>().isTaken)
+            .ToArray(); */
+        var nodes=ResourceManager.GetNearest(agent.transform.position, resourceTag);
+        //if (nodes.Length == 0) return false;
+        //target = nodes.OrderBy(n => Vector3.Distance(transform.position, n.transform.position)).First();
+        target = nodes.gameObject;
+        target.GetComponent<FarmResources>().SetTaken(true);
+        
         return true;
     }
 

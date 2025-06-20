@@ -38,7 +38,8 @@ public class NPCRoleManager : MonoBehaviour
             int stone            = world.GetState("town_resources_Stone");
             int pendingBuildings = world.GetState("pending_buildings");
 
-            List<GAgent> agents = townHall.GetNPC();
+           // List<GAgent> agents = townHall.GetNPC();
+           List<GAgent> agents = FindObjectsOfType<GAgent>().ToList();
             int N = agents.Count;
             allNPCSNeeds.Clear();
             foreach (var a in agents)
@@ -60,7 +61,7 @@ public class NPCRoleManager : MonoBehaviour
             float wBuilder     = uBuilder     * 1.2f;
             float wLumberjack  = woodUrgency  * 1.3f;
             float wMiner       = stoneUrgency * 1.2f;
-            float wGuard       = 0.2f;  // siempre algunos guardianes
+            float wGuard       = 0.1f;  // siempre algunos guardianes
 
             float sumW = wHunter + wBuilder + wLumberjack + wMiner + wGuard;
             if (sumW < 1e-4f)
@@ -74,24 +75,33 @@ public class NPCRoleManager : MonoBehaviour
             float pMiner      = wMiner      / sumW;
             float pGuard      = wGuard      / sumW;
 
-            int tHunter     = Mathf.RoundToInt(N * pHunter);
-            int tBuilder    = Mathf.RoundToInt(N * pBuilder);
-            int tLumberjack= Mathf.RoundToInt(N * pLumberjack);
-            int tMiner      = Mathf.RoundToInt(N * pMiner);
-            int assigned    = tHunter + tBuilder + tLumberjack + tMiner;
-            int tGuard      = Mathf.Max(0, N - assigned);
+            int tHunter      = Mathf.Max(1, Mathf.RoundToInt(N * pHunter));
+            int tBuilder     = Mathf.Max(1, Mathf.RoundToInt(N * pBuilder));
+            int tLumberjack  = Mathf.Max(1, Mathf.RoundToInt(N * pLumberjack));
+            int tMiner       = Mathf.Max(1, Mathf.RoundToInt(N * pMiner));
+
+            int assigned     = tHunter + tBuilder + tLumberjack + tMiner;
+            if (assigned > N) {
+                float scale = N / (float)assigned;
+                tHunter      = Mathf.FloorToInt(tHunter * scale);
+                tBuilder     = Mathf.FloorToInt(tBuilder * scale);
+                tLumberjack  = Mathf.FloorToInt(tLumberjack * scale);
+                tMiner       = Mathf.FloorToInt(tMiner * scale);
+                assigned     = tHunter + tBuilder + tLumberjack + tMiner;
+            }
+            int tGuard = Mathf.Max(0, N - assigned);
 
             var rnd      = new System.Random();
             var shuffled = agents.OrderBy(_ => rnd.Next()).ToList();
             int idx = 0;
             for (int i = 0; i < tHunter      && idx < N; i++, idx++)
-                shuffled[idx].GetComponent<NPCRoleAssigner>()?.SetupRole(NPCRole.Hunter, 10);
+                shuffled[idx].GetComponent<NPCRoleAssigner>()?.SetupRole(NPCRole.Hunter, 5);
             for (int i = 0; i < tBuilder     && idx < N; i++, idx++)
                 shuffled[idx].GetComponent<NPCRoleAssigner>()?.SetupRole(NPCRole.Builder, 1);
             for (int i = 0; i < tLumberjack && idx < N; i++, idx++)
-                shuffled[idx].GetComponent<NPCRoleAssigner>()?.SetupRole(NPCRole.Lumberjack, 70);
+                shuffled[idx].GetComponent<NPCRoleAssigner>()?.SetupRole(NPCRole.Lumberjack, 5);
             for (int i = 0; i < tMiner       && idx < N; i++, idx++)
-                shuffled[idx].GetComponent<NPCRoleAssigner>()?.SetupRole(NPCRole.Miner, 80);
+                shuffled[idx].GetComponent<NPCRoleAssigner>()?.SetupRole(NPCRole.Miner, 5);
             for (; idx < N; idx++)
                 shuffled[idx].GetComponent<NPCRoleAssigner>()?.SetupRole(NPCRole.Guard, 1);
 
@@ -103,7 +113,7 @@ public class NPCRoleManager : MonoBehaviour
     {
         if (statsText == null) return;
         
-        var agents = townHall.GetNPC();
+        var agents = FindObjectsOfType<GAgent>().ToList();
         
         var roles = System.Enum.GetValues(typeof(NPCRole)).Cast<NPCRole>();
         string result = "";
