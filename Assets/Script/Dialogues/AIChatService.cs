@@ -15,11 +15,16 @@ public class AIChatService : MonoBehaviour
         if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            
+
             _http = new HttpClient { BaseAddress = new Uri("http://localhost:11434") };
+            System.Net.ServicePointManager.DefaultConnectionLimit = 10;
             _http.DefaultRequestHeaders.ExpectContinue = false;
         } else Destroy(gameObject);
     }
     
+    /*
     async void Start()
     {
         
@@ -31,14 +36,14 @@ public class AIChatService : MonoBehaviour
 
         await SendChatCompletionAsync(warmNpc, "hola");
         Debug.Log("[IA] Warm-up completado");
-    }
+    }*/
     public async Task<string> SendInitialResponseAsync(NPCData npc)
     {
         TrimHistory(npc);
         var systemContent = 
             $"Eres un NPC de un videojuego ambientado en la Edad Media. " +
             $"Tu rol actual es: {npc.currentRole}. " +
-            "Sólo hablas en español, con vocabulario medieval, " +
+            //"Sólo hablas en español, con vocabulario medieval, tienes que ceñirte al papel y actuar como si fueras una persona real " +
             "y tus respuestas no superan 150 caracteres.";
 
         var msgList = new List<MessageData>
@@ -78,11 +83,11 @@ public class AIChatService : MonoBehaviour
                 var chunk = JsonUtility.FromJson<StreamingResponse>(line);
                 if (chunk.message?.content != null)
                     fullReply += chunk.message.content;
-                if (chunk.done) break;
+                //if (chunk.done) break;
             }
             catch {  }
         }
-
+        fullReply += await reader.ReadToEndAsync();
         npc.history.Add(new ChatMessage { role = "assistant", content = fullReply });
         TrimHistory(npc);
         return fullReply;
@@ -94,7 +99,7 @@ public class AIChatService : MonoBehaviour
         var systemContent = 
             $"Eres un NPC de un videojuego ambientado en la Edad Media. " +
             $"Tu rol actual es: {npc.currentRole}. " +
-            "Sólo hablas en español, con vocabulario medieval, " +
+            "Sólo hablas en español, con vocabulario medieval, tienes que ceñirte al papel y actuar como si fueras una persona real " +
             "y tus respuestas no superan 150 caracteres.";
 
         var msgList = new List<MessageData>

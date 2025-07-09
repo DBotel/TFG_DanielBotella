@@ -42,7 +42,7 @@ public class ChatCompletionRequest {
     public string model;
     public List<MessageData> messages;
     public bool stream = true;
-    public int max_tokens = 120;
+    public int max_tokens = 500;
     public float temperature = 0.3f;
 }
 
